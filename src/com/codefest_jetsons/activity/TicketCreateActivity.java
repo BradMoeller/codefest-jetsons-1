@@ -3,6 +3,7 @@ package com.codefest_jetsons.activity;
 import java.util.Calendar;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -36,6 +37,8 @@ public class TicketCreateActivity extends Activity implements
 		setClockTime(calendar);
 
 		mTimeBar.setOnSeekBarChangeListener(this);
+
+        startActivity(new Intent(TicketCreateActivity.this, TicketInfoActivity.class));
 	}
 
 	@Override
