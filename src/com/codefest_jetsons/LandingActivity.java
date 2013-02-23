@@ -8,6 +8,7 @@ import com.codefest_jetsons.model.CreditCard;
 import com.codefest_jetsons.model.Ticket;
 import com.codefest_jetsons.util.ParkingSharedPref;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
 
@@ -24,15 +25,27 @@ public class LandingActivity extends Activity {
         setContentView(R.layout.main);
 
         Random r = new Random();
-        long a = r.nextInt(Integer.MAX_VALUE);
-        ParkingSharedPref.setCreditCard(mAppContext, "nt@gmail.com", a, "nick", "tate", "234", "02", "2013", "469", CreditCard.CreditCardType.VISA);
-        CreditCard cc = ParkingSharedPref.getCreditCard(mAppContext, "nt@gmail.com", a);
 
-        long b = r.nextInt(Integer.MAX_VALUE);
-        ParkingSharedPref.setTicket(mAppContext, "nt@gmail.com", b, new Date(), 20, 60);
-        Ticket tt = ParkingSharedPref.getTicket(mAppContext, "nt@gmail.com", b);
+        for(int x = 0; x < 5; x++) {
+            ParkingSharedPref.setCreditCard(mAppContext, "nt@gmail.com", r.nextLong(), "nick"+x, "tate"+x, "234", "02", "2013", "469", CreditCard.CreditCardType.VISA);
+        }
 
-        Log.d(APP_TAG, cc.toString());
-        Log.d(APP_TAG, tt.toString());
+
+        ArrayList<CreditCard> cards = ParkingSharedPref.getAllCreditCards(mAppContext, "nt@gmail.com");
+        int x = 0;
+        for(CreditCard card : cards) {
+            if(x < 2) {
+                ParkingSharedPref.removeCreditCardId(mAppContext, "nt@gmail.com", card.getCardId());
+            }
+
+            //Log.d(APP_TAG, card.toString());
+            x++;
+        }
+
+        cards = ParkingSharedPref.getAllCreditCards(mAppContext, "nt@gmail.com");
+        for(CreditCard card : cards) {
+            Log.d(APP_TAG, card.toString());
+        }
+
     }
 }
