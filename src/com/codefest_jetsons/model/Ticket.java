@@ -48,4 +48,12 @@ public class Ticket {
     public void setMaxMinutes(int maxMinutes) {
         this.maxMinutes = maxMinutes;
     }
+
+    @Override
+    public String toString() {
+        return "TICKET" + "\n" + "================" + "\n" +
+                "Purchase Time: " + purchaseTime.toString() + "\n" +
+                "Minutes Purchased: " + maxMinutes + "\n" +
+                "Max Minutes: " + maxMinutes;
+    }
 }

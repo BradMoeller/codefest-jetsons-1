@@ -1,5 +1,9 @@
 package com.codefest_jetsons.model;
 
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created with IntelliJ IDEA.
  * User: nick49rt
@@ -97,14 +101,34 @@ public class CreditCard {
         AMEX ("Amex"),
         DISCOVER ("Discover");
 
-        private String value;
+        private static final Map<String,CreditCardType> lookupTag = new HashMap<String,CreditCardType>();
+
+        static {
+            for(CreditCardType e : EnumSet.allOf(CreditCardType.class)) {
+                lookupTag.put(e.value.toUpperCase(), e);
+            }
+        }
+        private final String value;
 
 
-        CreditCardType(String value) {
+        CreditCardType(final String value) {
             this.value = value;
         }
-        String getValue() {
-            return value;
+
+        public static CreditCardType getFromLabel (final String value) {
+            return lookupTag.get(value);
         }
     };
+
+    @Override
+    public String toString() {
+        return "CREDIT CARD" + "\n" + "================" +
+                "First name: " + fName + "\n" +
+                "Last name: " + lName + "\n" +
+                "CC number: " + ccNumber + "\n" +
+                "CC exp month: " + ccExpMonth + "\n" +
+                "CC exp year: " + ccExpYear + "\n" +
+                "CC ccv: " + ccCVV + "\n" +
+                "CC type: " + ccType.name() + "\n";
+    }
 }
