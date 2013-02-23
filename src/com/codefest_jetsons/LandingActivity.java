@@ -26,32 +26,6 @@ public class LandingActivity extends Activity {
         mAppContext = getApplicationContext();
         setContentView(R.layout.main);
 
-
         startActivity(new Intent(LandingActivity.this, TicketInfoActivity.class));
-
-
-        /*
-        Random r = new Random();
-        for(int x = 0; x < 5; x++) {
-            ParkingSharedPref.setCreditCard(mAppContext, "nt@gmail.com", r.nextLong(), "nick"+x, "tate"+x, "234", "02", "2013", "469", CreditCard.CreditCardType.VISA);
-        }
-
-
-        ArrayList<CreditCard> cards = ParkingSharedPref.getAllCreditCards(mAppContext, "nt@gmail.com");
-        int x = 0;
-        for(CreditCard card : cards) {
-            if(x < 2) {
-                ParkingSharedPref.removeCreditCardId(mAppContext, "nt@gmail.com", card.getCardId());
-            }
-
-            //Log.d(APP_TAG, card.toString());
-            x++;
-        }
-
-        cards = ParkingSharedPref.getAllCreditCards(mAppContext, "nt@gmail.com");
-        for(CreditCard card : cards) {
-            Log.d(APP_TAG, card.toString());
-        }
-        */
     }
 }
