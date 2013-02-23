@@ -1,4 +1,4 @@
-package com.codefest_jetsons;
+package com.codefest_jetsons.activity;
 
 import java.util.Calendar;
 
@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import com.codefest_jetsons.R;
 
 public class TicketCreateActivity extends Activity implements
 		SeekBar.OnSeekBarChangeListener {
@@ -22,7 +23,7 @@ public class TicketCreateActivity extends Activity implements
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
+		setContentView(R.layout.ticket_creation_activity);
 
 		mTimeBar = (SeekBar) findViewById(R.id.park_time);
 		mHour = (TextView) findViewById(R.id.hour);
