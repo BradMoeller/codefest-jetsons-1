@@ -75,6 +75,6 @@ public class TicketCreateActivity extends Activity implements
 		String am_pm = (period == Calendar.AM) ? "AM": "PM";
 		int clock_hour = calendar.get(Calendar.HOUR);
 		int clock_minute = calendar.get(Calendar.MINUTE);
-		mClock.setText(String.format("%02d  :  %02d   %s", clock_hour, clock_minute, am_pm));
+		mClock.setText(String.format("%02d:%02d %s", clock_hour, clock_minute, am_pm));
 	}
 }
