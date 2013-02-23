@@ -12,6 +12,7 @@ import java.util.Map;
  * To change this template use File | Settings | File Templates.
  */
 public class CreditCard {
+    public static final String CARD_ID = "cc.cardid";
     public static final String FIRST_NAME = "cc.firstname";
     public static final String LAST_NAME = "cc.lastname";
     public static final String CC_NUMBER = "cc.number";
@@ -20,6 +21,7 @@ public class CreditCard {
     public static final String CC_CCV = "cc.ccv";
     public static final String CC_TYPE = "cc.type";
 
+    private long cardId;
     private String fName;
     private String lName;
     private String ccNumber;
@@ -28,8 +30,9 @@ public class CreditCard {
     private String ccCVV;
     private CreditCardType ccType;
 
-    public CreditCard(String fName, String lName, String ccNumber, String ccExpMonth,
+    public CreditCard(long cardId, String fName, String lName, String ccNumber, String ccExpMonth,
                       String ccExpYear, String ccCCV, CreditCardType ccType) {
+        this.cardId = cardId;
         this.fName = fName;
         this.lName = lName;
         this.ccNumber = ccNumber;
@@ -95,6 +98,14 @@ public class CreditCard {
         this.ccType = ccType;
     }
 
+    public long getCardId() {
+        return cardId;
+    }
+
+    public void setCardId(long cardId) {
+        this.cardId = cardId;
+    }
+
     public static enum CreditCardType {
         MASTER_CARD ("MasterCard"),
         VISA ("Visa"),
@@ -123,6 +134,7 @@ public class CreditCard {
     @Override
     public String toString() {
         return "CREDIT CARD" + "\n" + "================" +
+                "Card id: " + cardId + "\n" +
                 "First name: " + fName + "\n" +
                 "Last name: " + lName + "\n" +
                 "CC number: " + ccNumber + "\n" +

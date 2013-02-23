@@ -8,11 +8,14 @@ package com.codefest_jetsons.model;
  * To change this template use File | Settings | File Templates.
  */
 public class Vehicle {
+    public static final String VEHICLE_ID = "vehicle.vid";
     public static final String LICENSE_PLATE = "vehicle.licenseplate";
 
+    private long vehicleId;
     private String licensePlate;
 
-    public Vehicle(String licensePlate) {
+    public Vehicle(long vehicleId, String licensePlate) {
+        this.vehicleId = vehicleId;
         this.licensePlate = licensePlate;
     }
 
@@ -22,5 +25,13 @@ public class Vehicle {
 
     public void setLicensePlate(String licensePlate) {
         this.licensePlate = licensePlate;
+    }
+
+    public long getVehicleId() {
+        return vehicleId;
+    }
+
+    public void setVehicleId(long vehicleId) {
+        this.vehicleId = vehicleId;
     }
 }

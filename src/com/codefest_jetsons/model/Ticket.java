@@ -11,15 +11,18 @@ import java.util.Date;
  * To change this template use File | Settings | File Templates.
  */
 public class Ticket {
+    public static final String TICKET_ID = "ticket.ticketid";
     public static final String PURCHASE_TIME = "ticket.purchasetime";
     public static final String MINUTES_PURCHASED = "ticket.minpurchased";
     public static final String MAX_MINUTES = "ticket.maxminutes";
 
+    private long ticketId;
     private Date purchaseTime;
     private int minutesPurchased;
     private int maxMinutes;
 
-    public Ticket(Date purchaseTime, int minutesPurchased, int maxMinutes) {
+    public Ticket(long ticketId, Date purchaseTime, int minutesPurchased, int maxMinutes) {
+        this.ticketId = ticketId;
         this.purchaseTime = purchaseTime;
         this.minutesPurchased = minutesPurchased;
         this.maxMinutes = maxMinutes;
@@ -52,6 +55,7 @@ public class Ticket {
     @Override
     public String toString() {
         return "TICKET" + "\n" + "================" + "\n" +
+                "Ticket id: " + ticketId + "\n" +
                 "Purchase Time: " + purchaseTime.toString() + "\n" +
                 "Minutes Purchased: " + maxMinutes + "\n" +
                 "Max Minutes: " + maxMinutes;
