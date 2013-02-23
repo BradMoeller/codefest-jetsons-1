@@ -5,12 +5,15 @@
           android:versionName="1.0">
     <uses-sdk android:minSdkVersion="14" android:targetSdkVersion="17" />
     <application android:label="@string/app_name" android:icon="@drawable/ic_launcher" android:theme="@style/MyAppTheme">
-        <activity android:name=".TicketCreateActivity"
+        <activity android:name=".LandingActivity"
+                  android:screenOrientation="portrait"
                   android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".activity.TicketInfoActivity" android:screenOrientation="portrait" />
+        <activity android:name=".activity.TicketCreateActivity" android:screenOrientation="portrait" />
     </application>
 </manifest>
