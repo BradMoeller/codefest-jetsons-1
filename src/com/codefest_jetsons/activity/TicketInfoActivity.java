@@ -24,11 +24,8 @@ import com.codefest_jetsons.util.ParkingNotifications;
 import com.codefest_jetsons.util.ParkingSharedPref;
 
 /**
- * Created with IntelliJ IDEA.
- * User: nick49rt
- * Date: 2/23/13
- * Time: 2:59 PM
- * To change this template use File | Settings | File Templates.
+ * Created with IntelliJ IDEA. User: nick49rt Date: 2/23/13 Time: 2:59 PM To
+ * change this template use File | Settings | File Templates.
  */
 public class TicketInfoActivity extends Activity {
     private Context mAppContext;
