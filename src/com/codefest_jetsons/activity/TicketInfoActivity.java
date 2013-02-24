@@ -318,7 +318,6 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
 		mMapFragment.getMap().setOnMarkerClickListener(this);
 		
 		mLocationManager.startGettingLocations(LOCATION_UPDATE_INTERVAL);
-		
         t = ParkingSharedPref.getTicket(mAppContext, "frank@gmail.com", ParkingSharedPref.getCurrentTicketID(this, "frank@gmail.com"));
         ticketTimer = t.getMillisecondsLeft();
         ParkingNotifications.startNotifications(mAppContext, ticketTimer);
