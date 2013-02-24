@@ -123,7 +123,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:text="YOU&apos;RE GOOD UNTIL:"
+                android:text="VALID UNTIL:"
                 android:textColor="#22222f"
                 android:textSize="20sp"
                 android:textStyle="bold" />
