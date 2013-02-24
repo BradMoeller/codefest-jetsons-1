@@ -12,8 +12,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
            </intent-filter>    
         </activity>
-        <activity android:name="LicencePlateActivity" android:screenOrientation="portrait">    
-        </activity>
         <activity android:name=".activity.TicketInfoActivity" android:screenOrientation="portrait" />
         <activity android:name=".activity.ValidateActivity" android:screenOrientation="portrait" />
     </application>
