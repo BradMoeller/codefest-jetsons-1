@@ -3,6 +3,7 @@ package com.codefest_jetsons.fragment;
 import android.app.DialogFragment;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,10 +22,16 @@ public class HeatMapDialogFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.heat_map_layout, container);
+        /*
         mWebView = (WebView) view.findViewById(R.id.webView);
-        Uri path = 
+        Uri path =
         	Uri.parse("android.resource://com.codefest_jetsons/" + R.drawable.mapheat);
+        //Uri pathTwo = Uri.parse("http://www.google.com");
         mWebView.loadUrl(path.toString());
+
+        //Log.d("DERP", "PATH TO FILE: "+pathTwo.toString());
+        */
+
         return view;
     }
 

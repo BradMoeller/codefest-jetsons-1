@@ -316,7 +316,6 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
 		mMapFragment.getMap().setOnMarkerClickListener(this);
 		
 		mLocationManager.startGettingLocations(LOCATION_UPDATE_INTERVAL);
-		
         t = ParkingSharedPref.getTicket(mAppContext, "frank@gmail.com", ParkingSharedPref.getCurrentTicketID(this, "frank@gmail.com"));
         ticketTimer = t.getMillisecondsLeft();
         ParkingNotifications.startNotifications(mAppContext, ticketTimer);
@@ -573,6 +572,11 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
 					getDialog().dismiss();
 				}
 			});
+			
+			// update the clock
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTimeInMillis(System.currentTimeMillis());
+			setClockTime(calendar);
 			
 			mTimeBar.setMax((mMaxtimeSeconds/60)/SNAP_DELTA_MINUTES);
 			mTimeBar.setOnSeekBarChangeListener(this);

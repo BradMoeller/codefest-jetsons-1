@@ -12,9 +12,11 @@ import java.util.Random;
 import java.util.Date;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
@@ -35,6 +37,8 @@ import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationSet;
 import android.view.animation.TranslateAnimation;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -426,6 +430,7 @@ public class TicketCreateActivity extends Activity implements
 		
         mLatitude = lat;
         mLongitude = lon;
+        Log.d("DERP", "Lat: "+lat+"    ||  Lon: "+lon);
 	}
 	
     protected void startCameraActivity() {
@@ -556,9 +561,39 @@ public class TicketCreateActivity extends Activity implements
 
 	@Override
 	public void onMapClick(LatLng arg0) {
+
+        /*
 		FragmentManager fm = this.getFragmentManager();
         HeatMapDialogFragment df = new HeatMapDialogFragment();
         df.show(fm, "fragment_name");
+        */
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        alert.setTitle("Parking Heat Map");
+        WebView wv = new WebView(this);
+
+        wv.loadUrl("http://cbloft.dev.becho.me/mapheat.png");
+
+        wv.setWebViewClient(new WebViewClient()
+        {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url)
+            {
+                view.loadUrl(url);
+
+                return true;
+            }
+        });
+
+        alert.setView(wv);
+        alert.setNegativeButton("Close", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int id)
+            {
+            }
+        });
+        alert.show();
 	}
 
 }
