@@ -97,7 +97,7 @@ public class ParkingSharedPref {
         return vehicles;
     }
 
-    public static void setTicket(Context ctx, String userID, long tID, Date purchaseTime, int minutesPurchased, int maxMinutes) {
+    public static void setTicket(Context ctx, String userID, long tID, Date purchaseTime, int minutesPurchased, int maxMinutes, double lat, double lon) {
         SharedPreferences.Editor spEditor = ctx.getSharedPreferences(TICKET_PREF, Context.MODE_PRIVATE).edit();
 
         String ticketID = String.valueOf(tID);
@@ -119,7 +119,9 @@ public class ParkingSharedPref {
         return new Ticket(Long.valueOf(sp.getString(userKeyMap(userID, ticketID, Ticket.TICKET_ID), "0")),
                 new Date(Long.valueOf(sp.getString(userKeyMap(userID, ticketID, Ticket.PURCHASE_TIME), "0"))),
                 Integer.valueOf(sp.getString(userKeyMap(userID, ticketID, Ticket.MINUTES_PURCHASED), "0")),
-                Integer.valueOf(sp.getString(userKeyMap(userID, ticketID, Ticket.MAX_MINUTES), "0")));
+                Integer.valueOf(sp.getString(userKeyMap(userID, ticketID, Ticket.MAX_MINUTES), "0")),
+                Double.valueOf(sp.getString(userKeyMap(userID, ticketID, Ticket.LATITUDE), "0")),
+                Double.valueOf(sp.getString(userKeyMap(userID, ticketID, Ticket.LONGTIUDE), "0")));
     }
 
     public static ArrayList<Ticket> getAllTickets(Context ctx, String userID) {

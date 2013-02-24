@@ -1,5 +1,6 @@
 package com.codefest_jetsons;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 import android.content.Context;
@@ -23,11 +24,15 @@ public class LicensePlateAdapter extends PagerAdapter  {
 	private Context mContext;
 	private int mPrimaryItem = 0;
 	private LicensePlateAdapterInterface mListener;
-	
+    private WeakReference<EditText> license1;
+    private WeakReference<EditText> license2;
+
 	public LicensePlateAdapter(List<Vehicle> vehicles, Context context, LicensePlateAdapterInterface listener) {
 		mVehicles = vehicles;
 		mContext = context;
 		mListener = listener;
+        license1 = null;
+        license2 = null;
 	}
 	
 	@Override
@@ -83,7 +88,9 @@ public class LicensePlateAdapter extends PagerAdapter  {
 			view = inflater.inflate(R.layout.license_plate_edit_page, null);
 			final EditText txt = (EditText) view.findViewById(R.id.firstText);  
 			final EditText txt2 = (EditText) view.findViewById(R.id.secondText);
-			
+            license1 = new WeakReference<EditText>(txt);
+            license2 = new WeakReference<EditText>(txt2);
+
 			Typeface font = Typeface.createFromAsset(mContext.getAssets(), "license_plate_usa.ttf");  
 			txt.setTypeface(font);
 			txt2.setTypeface(font);
@@ -125,4 +132,13 @@ public class LicensePlateAdapter extends PagerAdapter  {
 		((ViewPager) container).addView(view);
 		return view;
 	}
+
+    public WeakReference<EditText> getLicenseEdit(int i) {
+        if(i == 0) {
+            return license1;
+        }
+        else {
+            return license2;
+        }
+    }
 }

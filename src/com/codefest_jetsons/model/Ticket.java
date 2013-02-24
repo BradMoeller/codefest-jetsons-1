@@ -16,18 +16,24 @@ public class Ticket {
     public static final String PURCHASE_TIME = "ticket.purchasetime";
     public static final String MINUTES_PURCHASED = "ticket.minpurchased";
     public static final String MAX_MINUTES = "ticket.maxminutes";
+    public static final String LATITUDE = "ticket.latitude";
+    public static final String LONGTIUDE = "ticket.longitude";
 
     private long ticketId;
     private Date purchaseTime;
     private Date endTime;
     private int minutesPurchased;
     private int maxMinutes;
+    private double latitude;
+    private double longitude;
 
-    public Ticket(long ticketId, Date purchaseTime, int minutesPurchased, int maxMinutes) {
+    public Ticket(long ticketId, Date purchaseTime, int minutesPurchased, int maxMinutes, double lat, double lon) {
         this.ticketId = ticketId;
         this.purchaseTime = purchaseTime;
         this.minutesPurchased = minutesPurchased;
         this.maxMinutes = maxMinutes;
+        latitude = lat;
+        longitude = lon;
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(purchaseTime);
@@ -57,6 +63,14 @@ public class Ticket {
 
     public int getMaxMinutes() {
         return maxMinutes;
+    }
+    
+    public double getLongitude() {
+        return longitude;
+    }
+    
+    public double getLatitude() {
+        return latitude;
     }
 
     public void setMaxMinutes(int maxMinutes) {

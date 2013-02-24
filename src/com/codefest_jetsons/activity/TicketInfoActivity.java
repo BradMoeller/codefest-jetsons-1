@@ -7,6 +7,7 @@ import java.util.Random;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.media.ExifInterface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
@@ -51,7 +52,7 @@ public class TicketInfoActivity extends Activity {
 
         Random r = new Random();
         long id = r.nextInt(Integer.MAX_VALUE);
-        ParkingSharedPref.setTicket(mAppContext, "ntate@gmail.com", 50, new Date(), 11, 60);
+        ParkingSharedPref.setTicket(mAppContext, "ntate@gmail.com", 50, new Date(), 11, 60, 40.431368, -79.9805);
         t = ParkingSharedPref.getTicket(mAppContext, "ntate@gmail.com", 50);
 
         ticketTimer = t.getMillisecondsLeft();

@@ -2,7 +2,11 @@ package com.codefest_jetsons.fragment;
 
 
 import java.util.ArrayList;
+
+import android.content.Intent;
+import android.widget.Button;
 import com.codefest_jetsons.R;
+import com.codefest_jetsons.activity.TicketInfoActivity;
 import com.codefest_jetsons.model.CreditCard;
 import com.codefest_jetsons.util.ParkingSharedPref;
 
@@ -31,6 +35,14 @@ public class SelectCardFragment extends Fragment {
 		mListView = (ListView) view.findViewById(R.id.cards_list);
 		mListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		mListView.setItemsCanFocus(false);
+
+        Button park = (Button) view.findViewById(R.id.select_card_park);
+        park.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(mContext, TicketInfoActivity.class));
+            }
+        });
 		
 		return view;
 	}
