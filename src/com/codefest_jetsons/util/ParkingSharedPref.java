@@ -27,6 +27,8 @@ public class ParkingSharedPref {
     private static final String TICKET_PREF = "com.codefest_jetsons.ticketpref";
     private static final String TICKET_IDS_PREF = "com.codefest_jetsons.ticketidspref";
     private static final String TICKET_VALIDATED = "com.codefest_jetsons.ticketvalidated";
+    private static final String FIRST_LAUNCH_PREF = "com.codefest_jetsons.firstlaunchpref";
+    private static final String FIRST_LAUNCH_KEY = "com.codefest_jetsons.firstlaunchkey";
 
     public static void clearPrefs(Context ctx) {
         ctx.getSharedPreferences(CREDIT_CARD_PREF, Context.MODE_PRIVATE).edit().clear().commit();
@@ -188,6 +190,14 @@ public class ParkingSharedPref {
         HashSet<String> ids = getVehicleIds(ctx, userID);
         ids.remove(String.valueOf(id));
         ctx.getSharedPreferences(VEHICLE_IDS_PREF, Context.MODE_PRIVATE).edit().putStringSet(userID,  ids).commit();
+    }
+    
+    public static void setFirstLaunch(Context ctx) {
+        ctx.getSharedPreferences(FIRST_LAUNCH_PREF, Context.MODE_PRIVATE).edit().putBoolean(FIRST_LAUNCH_KEY, true).commit();
+    }
+    
+    public static boolean alreadyLaunched(Context ctx) {
+        return ctx.getSharedPreferences(FIRST_LAUNCH_PREF, Context.MODE_PRIVATE).getBoolean(FIRST_LAUNCH_KEY, false);
     }
 
     private static HashSet<String> getCreditCardIds(Context ctx, String userID) {

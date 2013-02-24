@@ -22,7 +22,6 @@ import android.graphics.Matrix;
 import android.location.Location;
 import android.media.ExifInterface;
 import android.net.Uri;
-import android.location.Location;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -39,6 +38,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -52,10 +52,11 @@ import com.codefest_jetsons.util.MyLocationManager;
 import com.codefest_jetsons.util.ParkingSharedPref;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.MapFragment;
-import com.googlecode.tesseract.android.TessBaseAPI;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.googlecode.tesseract.android.TessBaseAPI;
 
 public class TicketCreateActivity extends Activity implements
 		SeekBar.OnSeekBarChangeListener, LicensePlateAdapterInterface, OnClickListener, AnimationListener, MyLocationListener {
@@ -72,6 +73,7 @@ public class TicketCreateActivity extends Activity implements
 	private Animation mUpAnimation;
 	private ImageButton mSliderLayout;
 	private FrameLayout mMapHolder;
+	private ImageView mImageOverlay;
 
 	private MyLocationManager mLocationManager;
 	private MapFragment mMapFragment;
@@ -110,6 +112,7 @@ public class TicketCreateActivity extends Activity implements
 		mClock = (TextView) findViewById(R.id.clock);
 		mPay = (Button) findViewById(R.id.pay);
 		mSliderLayout = (ImageButton) findViewById(R.id.sliderLayout);
+		mImageOverlay = (ImageView) findViewById(R.id.imageOverlay);
 		
 		mSliderLayout.setOnClickListener(this);
 		
@@ -168,7 +171,7 @@ public class TicketCreateActivity extends Activity implements
                 -1.0f,                       //fromYValue
                 Animation.RELATIVE_TO_SELF, //toYType
                 0.0f);                      //toYValue
-		mDownAnimation.setDuration(300);
+		mDownAnimation.setDuration(500);
 		mDownAnimation.setFillAfter(true);
         set.addAnimation(mDownAnimation);
         // Slide up animation
@@ -181,10 +184,21 @@ public class TicketCreateActivity extends Activity implements
                 0.0f,                       //fromYValue
                 Animation.RELATIVE_TO_SELF, //toYType
                 -1.0f);                      //toYValue
-        mUpAnimation.setDuration(300);
+        mUpAnimation.setDuration(500);
         mUpAnimation.setFillAfter(true);
 		set.addAnimation(mUpAnimation);
 		mUpAnimation.setAnimationListener(this);
+		
+		if (ParkingSharedPref.alreadyLaunched(mAppContext)) {
+			mImageOverlay.setVisibility(View.GONE);
+		}
+		else {
+			mImageOverlay.setVisibility(View.VISIBLE);
+			mImageOverlay.setOnClickListener(this);
+			ParkingSharedPref.setFirstLaunch(mAppContext);
+		}
+		
+		mImageOverlay.setOnClickListener(this);
 		
         //AnimationController controller = new LayoutAnimationController(set, 0.25f);
         
@@ -345,7 +359,10 @@ public class TicketCreateActivity extends Activity implements
 	}
 
 	@Override
-	public void onClick(View arg0) {
+	public void onClick(View v) {
+		if (v.getId() == mImageOverlay.getId()) {
+			mImageOverlay.setVisibility(View.GONE);
+		}
 		// TODO NICK 
 	}
 
@@ -374,7 +391,10 @@ public class TicketCreateActivity extends Activity implements
 			mLastMarker.remove();
 		}
 		mMapFragment.getMap().animateCamera(CameraUpdateFactory.newLatLngZoom(ll, 15.0f));
-		mLastMarker = mMapFragment.getMap().addMarker(new MarkerOptions().position(ll));
+		mLastMarker = mMapFragment.getMap()
+		.addMarker(new MarkerOptions()
+		.position(ll)
+		.icon(BitmapDescriptorFactory.fromResource(R.drawable.car)));
 		
 	}
 	

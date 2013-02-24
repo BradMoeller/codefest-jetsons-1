@@ -6,10 +6,13 @@ import java.util.Date;
 import java.util.Random;
 
 import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.ExifInterface;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
@@ -22,19 +25,29 @@ import android.widget.ViewSwitcher;
 
 import com.codefest_jetsons.R;
 import com.codefest_jetsons.model.Ticket;
-import com.codefest_jetsons.service.TicketService;
+import com.codefest_jetsons.util.MyLocationListener;
+import com.codefest_jetsons.util.MyLocationManager;
 import com.codefest_jetsons.util.ParkingNotifications;
 import com.codefest_jetsons.util.ParkingSharedPref;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 /**
  * Created with IntelliJ IDEA. User: nick49rt Date: 2/23/13 Time: 2:59 PM To
  * change this template use File | Settings | File Templates.
  */
-public class TicketInfoActivity extends Activity {
+public class TicketInfoActivity extends Activity implements MyLocationListener, OnMarkerClickListener {
     private Context mAppContext;
 
     private long ticketTimer;
     private static final int SECOND = 1000;
+    private final int LOCATION_UPDATE_INTERVAL = 5000;
 
     private TextSwitcher rHours;
     private TextSwitcher rMin;
@@ -45,6 +58,10 @@ public class TicketInfoActivity extends Activity {
     private CountDownTimer countDownTimer;
     private Ticket t;
     private Runnable expiredRunnable;
+    private MapFragment mMapFragment;
+    private Marker mLastMarker;
+    private Marker mLastUserMarker;
+    private MyLocationManager mLocationManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,7 +74,7 @@ public class TicketInfoActivity extends Activity {
 
         Random r = new Random();
         long id = r.nextInt(Integer.MAX_VALUE);
-        ParkingSharedPref.setTicket(mAppContext, "ntate@gmail.com", 50, new Date(), 2, 60, 40.431368, -79.9805);
+        ParkingSharedPref.setTicket(mAppContext, "ntate@gmail.com", 50, new Date(), 2, 60, -79.9805, 40.431368 );
         t = ParkingSharedPref.getTicket(mAppContext, "ntate@gmail.com", 50);
 
         ticketTimer = t.getMillisecondsLeft();
@@ -68,6 +85,8 @@ public class TicketInfoActivity extends Activity {
         SimpleDateFormat s = new SimpleDateFormat("h:m a");
         endTime.setText(s.format(t.getEndTime()));
         loadSwitchers();
+        
+        mLocationManager = new MyLocationManager(this, this);
 
         lastH = getRemainingHours(ticketTimer);
         if(lastH < 10) {
@@ -162,6 +181,13 @@ public class TicketInfoActivity extends Activity {
                 "Nick", "Tate", "4300112233445566", "09", "2014", "554", CreditCard.CreditCardType.MASTER_CARD);
         CreditCard cc = ParkingSharedPref.getCreditCard(mAppContext, "ntate@gmail.com", id);
         */
+        
+        FragmentManager manager = getFragmentManager();
+	    FragmentTransaction transaction = manager.beginTransaction();
+
+	    mMapFragment = MapFragment.newInstance();
+	    transaction.add(R.id.mapHolder, mMapFragment);           
+	    transaction.commit();
     }
 
     private void setListeners() {
@@ -223,18 +249,35 @@ public class TicketInfoActivity extends Activity {
     public void onPause() {
         super.onPause();
         countDownTimer.cancel();
+        mLocationManager.stopGettingLocations();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
         if(ParkingSharedPref.getValidated(mAppContext, "ntate22@gmail.com", "12345")) {
             TextView header = (TextView) findViewById(R.id.paid_header);
             header.setText("VALIDATED");
             header.setBackgroundResource(R.drawable.blue_gradient);
         }
 
+        
+        if (mLastUserMarker != null) {
+        	mLastUserMarker.remove();
+		}
+        
+        mMapFragment.getMap().getUiSettings().setZoomControlsEnabled(false);
+		mMapFragment.getMap().getUiSettings().setAllGesturesEnabled(false);
+        LatLng ll = new LatLng(t.getLatitude(), t.getLongitude());
+		mMapFragment.getMap().animateCamera(CameraUpdateFactory.newLatLngZoom(ll, 13.0f));
+		mLastUserMarker = mMapFragment.getMap()
+		.addMarker(new MarkerOptions()
+		.position(ll)
+		.icon(BitmapDescriptorFactory.fromResource(R.drawable.car)));
+		mMapFragment.getMap().setOnMarkerClickListener(this);
+		
+		mLocationManager.startGettingLocations(LOCATION_UPDATE_INTERVAL);
+		
         t = ParkingSharedPref.getTicket(mAppContext, "ntate@gmail.com", 50);
         ticketTimer = t.getMillisecondsLeft();
         ParkingNotifications.startNotifications(mAppContext, ticketTimer);
@@ -318,5 +361,32 @@ public class TicketInfoActivity extends Activity {
         }
 
     }
+
+	@Override
+	public void gotLocation(Location location) {
+		double lat = location.getLatitude();
+		double lon = location.getLongitude();
+		LatLng ll = new LatLng(lat, lon);
+		if (mLastMarker != null) {
+			mLastMarker.remove();
+		}
+		
+		double MAX_LAT = Math.max(t.getLatitude(), lat);
+		double MAX_LONG = Math.max(t.getLongitude(), lon);
+		double MIN_LAT = Math.min(t.getLatitude(), lat);
+		double MIN_LONG = Math.min(t.getLongitude(), lon);
+        
+		LatLng northeast = new LatLng(MAX_LAT, MAX_LONG);
+        LatLng southwest = new LatLng(MIN_LAT, MIN_LONG);
+		
+		mMapFragment.getMap().animateCamera(CameraUpdateFactory.newLatLngBounds(
+				new LatLngBounds(southwest, northeast), 30));
+		mLastMarker = mMapFragment.getMap().addMarker(new MarkerOptions().position(ll));
+	}
+
+	@Override
+	public boolean onMarkerClick(Marker arg0) {
+		return true;
+	}
 
 }
