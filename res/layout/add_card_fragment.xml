@@ -11,6 +11,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:inputType="text"
+        android:singleLine="true"
+        android:imeOptions="actionNext"
         android:hint="Card Holder Name" >
 
         <requestFocus />
@@ -22,6 +24,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:inputType="number"
+        android:singleLine="true"
+        android:imeOptions="actionNext"
         android:hint="Card Number" />
 
     <LinearLayout
@@ -34,6 +38,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="MM"
+            android:singleLine="true"
+        	android:imeOptions="actionNext"
             android:inputType="number"
             android:maxLength="2" />
 
@@ -51,6 +57,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="YYYY"
+            android:singleLine="true"
+        	android:imeOptions="actionNext"
             android:inputType="number"
             android:maxLength="4" />
     </LinearLayout>
@@ -61,6 +69,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:hint="CVV"
+        android:singleLine="true"
+        android:imeOptions="actionDone"
         android:inputType="number"
         android:maxLength="4" />
 
