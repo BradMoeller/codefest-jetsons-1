@@ -572,6 +572,11 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
 				}
 			});
 			
+			// update the clock
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTimeInMillis(System.currentTimeMillis());
+			setClockTime(calendar);
+			
 			mTimeBar.setMax((mMaxtimeSeconds/60)/SNAP_DELTA_MINUTES);
 			mTimeBar.setOnSeekBarChangeListener(this);
 			
