@@ -15,6 +15,7 @@ import android.media.ExifInterface;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -30,6 +31,7 @@ import com.codefest_jetsons.util.MyLocationManager;
 import com.codefest_jetsons.util.ParkingNotifications;
 import com.codefest_jetsons.util.ParkingSharedPref;
 import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -48,6 +50,7 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
     private long ticketTimer;
     private static final int SECOND = 1000;
     private final int LOCATION_UPDATE_INTERVAL = 5000;
+    private int HANDLER_DELAY = 1000;
 
     private TextSwitcher rHours;
     private TextSwitcher rMin;
@@ -82,7 +85,7 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
         //ParkingNotifications.startNotifications(mAppContext, ticketTimer);
 
         final TextView endTime = (TextView) findViewById(R.id.expiration_time);
-        SimpleDateFormat s = new SimpleDateFormat("h:m a");
+        SimpleDateFormat s = new SimpleDateFormat("h:mm a");
         endTime.setText(s.format(t.getEndTime()));
         loadSwitchers();
         
@@ -366,7 +369,7 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
 	public void gotLocation(Location location) {
 		double lat = location.getLatitude();
 		double lon = location.getLongitude();
-		LatLng ll = new LatLng(lat, lon);
+		final LatLng ll = new LatLng(lat, lon);
 		if (mLastMarker != null) {
 			mLastMarker.remove();
 		}
@@ -376,12 +379,29 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
 		double MIN_LAT = Math.min(t.getLatitude(), lat);
 		double MIN_LONG = Math.min(t.getLongitude(), lon);
         
-		LatLng northeast = new LatLng(MAX_LAT, MAX_LONG);
-        LatLng southwest = new LatLng(MIN_LAT, MIN_LONG);
-		
-		mMapFragment.getMap().animateCamera(CameraUpdateFactory.newLatLngBounds(
-				new LatLngBounds(southwest, northeast), 30));
-		mLastMarker = mMapFragment.getMap().addMarker(new MarkerOptions().position(ll));
+		final LatLng northeast = new LatLng(MAX_LAT, MAX_LONG);
+        final LatLng southwest = new LatLng(MIN_LAT, MIN_LONG);
+
+        Runnable mapLoad = new Runnable() {
+            @Override
+            public void run() {
+                GoogleMap map = mMapFragment.getMap();
+                if(map != null) {
+                    HANDLER_DELAY = 250;
+                    map.animateCamera(CameraUpdateFactory.newLatLngBounds(
+                            new LatLngBounds(southwest, northeast), 30));
+                    mLastMarker = map.addMarker(new MarkerOptions().position(ll));
+                }
+                else {
+                    Handler myHandler = new Handler();
+                    HANDLER_DELAY *= 2;
+                    myHandler.postDelayed(this, HANDLER_DELAY);
+                }
+            }
+        };
+
+        Handler myHandler = new Handler();
+        myHandler.postDelayed(mapLoad, HANDLER_DELAY);
 	}
 
 	@Override
