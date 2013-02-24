@@ -51,7 +51,7 @@ public class LicensePlateAdapter extends PagerAdapter  {
 				InputMethodManager im = ((InputMethodManager)mContext.getSystemService(Context.INPUT_METHOD_SERVICE));
 				im.hideSoftInputFromWindow(container.getWindowToken(), 0);
 			}
-			else {
+			else if(position == mVehicles.size()) {
 				mListener.enteredCreatePlate();
 				// We just selected the new
 				InputMethodManager im = ((InputMethodManager)mContext.getSystemService(Context.INPUT_METHOD_SERVICE));

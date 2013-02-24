@@ -10,6 +10,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationSet;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
@@ -30,11 +32,17 @@ import com.codefest_jetsons.LicensePlateAdapterInterface;
 import com.codefest_jetsons.R;
 import com.codefest_jetsons.model.CreditCard;
 import com.codefest_jetsons.model.Vehicle;
+import com.codefest_jetsons.util.MyLocationListener;
+import com.codefest_jetsons.util.MyLocationManager;
 import com.codefest_jetsons.util.ParkingSharedPref;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 public class TicketCreateActivity extends Activity implements
-		SeekBar.OnSeekBarChangeListener, LicensePlateAdapterInterface, OnClickListener {
+		SeekBar.OnSeekBarChangeListener, LicensePlateAdapterInterface, OnClickListener, AnimationListener, MyLocationListener {
 
 	private SeekBar mTimeBar;
 	private TextView mHour;
@@ -48,10 +56,14 @@ public class TicketCreateActivity extends Activity implements
 	private Animation mUpAnimation;
 	private ImageButton mSliderLayout;
 	private FrameLayout mMapHolder;
+	private MyLocationManager mLocationManager;
+	private MapFragment mMapFragment;
+	private Marker mLastMarker;
 	
 	private final int SNAP_DELTA_MINUTES = 15;
 	private final int mMaxtimeSeconds = 7200; // maximum time in seconds the user can choose
 	private final double COST_PER_MINUTE = 0.01666666666666;
+	private final int LOCATION_UPDATE_INTERVAL = 5000;
 	private final String USER_ID = "0";
 
 	/**
@@ -81,6 +93,8 @@ public class TicketCreateActivity extends Activity implements
 		mTimeBar.setOnSeekBarChangeListener(this);
 		mTimeBar.setMax((mMaxtimeSeconds/60)/SNAP_DELTA_MINUTES);
 		
+		mLocationManager = new MyLocationManager(this, this);
+		
 		//mTimeBar.setMax(max)
 		 // Make some mock data for now
         List<Vehicle> vhs = new ArrayList<Vehicle>();
@@ -89,7 +103,7 @@ public class TicketCreateActivity extends Activity implements
         List<CreditCard> ccs = new ArrayList<CreditCard>();
         int y = 2013;
         Random r = new Random();
-        if (ParkingSharedPref.getAllVehicles(mAppContext, USER_ID).size() == 0) {
+        if (ParkingSharedPref.getAllVehicles(mAppContext, USER_ID).size() == 1) {
         	// Create some fake data...
         	ParkingSharedPref.setVehicle(mAppContext, USER_ID, 1, "ABC1234");
         	ParkingSharedPref.setVehicle(mAppContext, USER_ID, 2, "FJT2651");
@@ -126,7 +140,7 @@ public class TicketCreateActivity extends Activity implements
                 -1.0f,                       //fromYValue
                 Animation.RELATIVE_TO_SELF, //toYType
                 0.0f);                      //toYValue
-		mDownAnimation.setDuration(500);
+		mDownAnimation.setDuration(300);
 		mDownAnimation.setFillAfter(true);
         set.addAnimation(mDownAnimation);
         // Slide up animation
@@ -139,19 +153,19 @@ public class TicketCreateActivity extends Activity implements
                 0.0f,                       //fromYValue
                 Animation.RELATIVE_TO_SELF, //toYType
                 -1.0f);                      //toYValue
-        mUpAnimation.setDuration(500);
+        mUpAnimation.setDuration(300);
         mUpAnimation.setFillAfter(true);
 		set.addAnimation(mUpAnimation);
+		mUpAnimation.setAnimationListener(this);
 		
         //AnimationController controller = new LayoutAnimationController(set, 0.25f);
         
 		FragmentManager manager = getFragmentManager();
 	    FragmentTransaction transaction = manager.beginTransaction();
 
-	    transaction.add(R.id.mapHolder, MapFragment.newInstance());           
+	    mMapFragment = MapFragment.newInstance();
+	    transaction.add(R.id.mapHolder, mMapFragment);           
 	    transaction.commit();
-		
-		
 		
         getWindow().setSoftInputMode(
         	    WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -162,6 +176,24 @@ public class TicketCreateActivity extends Activity implements
 			}
 		});
 	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		mLocationManager.stopGettingLocations();
+	}
+
+
+
+	@Override
+	protected void onResume() {
+		mLocationManager.startGettingLocations(LOCATION_UPDATE_INTERVAL);
+		mMapFragment.getMap().getUiSettings().setZoomControlsEnabled(false);
+		mMapFragment.getMap().getUiSettings().setAllGesturesEnabled(false);
+		super.onResume();
+	}
+
+
 
 	@Override
 	public void onProgressChanged(SeekBar seekBar, int progress,
@@ -220,17 +252,48 @@ public class TicketCreateActivity extends Activity implements
 
 	@Override
 	public void enteredCreatePlate() {
+		mSliderLayout.setVisibility(View.VISIBLE);
+		mSliderLayout.setEnabled(true);
 		mSliderLayout.startAnimation(mDownAnimation);	
 	}
 
 	@Override
 	public void exitedCreatePlate() {
-		mSliderLayout.startAnimation(mUpAnimation);	
+		mSliderLayout.startAnimation(mUpAnimation);
 	}
 
 	@Override
 	public void onClick(View arg0) {
 		// TODO NICK 
+	}
+
+	@Override
+	public void onAnimationEnd(Animation arg0) {
+		mSliderLayout.setVisibility(View.GONE);
+		mSliderLayout.setEnabled(false);
+	}
+
+	@Override
+	public void onAnimationRepeat(Animation arg0) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void onAnimationStart(Animation arg0) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void gotLocation(Location location) {
+		double lat = location.getLatitude();
+		double lon = location.getLongitude();
+		LatLng ll = new LatLng(lat, lon);
+		if (mLastMarker != null) {
+			mLastMarker.remove();
+		}
+		mMapFragment.getMap().animateCamera(CameraUpdateFactory.newLatLngZoom(ll, 15.0f));
+		mLastMarker = mMapFragment.getMap().addMarker(new MarkerOptions().position(ll));
+		
 	}
 
 }
