@@ -1,6 +1,7 @@
 package com.codefest_jetsons.model;
 
 
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -18,6 +19,7 @@ public class Ticket {
 
     private long ticketId;
     private Date purchaseTime;
+    private Date endTime;
     private int minutesPurchased;
     private int maxMinutes;
 
@@ -26,6 +28,15 @@ public class Ticket {
         this.purchaseTime = purchaseTime;
         this.minutesPurchased = minutesPurchased;
         this.maxMinutes = maxMinutes;
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(purchaseTime);
+        cal.add(Calendar.MINUTE, minutesPurchased);
+        this.endTime = cal.getTime();
+    }
+
+    public long getMillisecondsLeft() {
+        return endTime.getTime() - new Date().getTime();
     }
 
     public Date getPurchaseTime() {
@@ -59,5 +70,13 @@ public class Ticket {
                 "Purchase Time: " + purchaseTime.toString() + "\n" +
                 "Minutes Purchased: " + maxMinutes + "\n" +
                 "Max Minutes: " + maxMinutes;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
     }
 }

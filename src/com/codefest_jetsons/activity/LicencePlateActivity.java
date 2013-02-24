@@ -1,17 +1,23 @@
-package com.codefest_jetsons;
+package com.codefest_jetsons.activity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 
+import com.codefest_jetsons.LicensePlateAdapter;
+import com.codefest_jetsons.R;
 import com.codefest_jetsons.model.CreditCard;
 import com.codefest_jetsons.model.CreditCard.CreditCardType;
+import com.codefest_jetsons.util.ParkingSharedPref;
 
 public class LicencePlateActivity extends Activity {
+    private Context mAppContext;
 	
 	private PagerAdapter mPagerAdapter;
 	
@@ -21,15 +27,19 @@ public class LicencePlateActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mAppContext = getApplicationContext();
         setContentView(R.layout.license_plate_activity);
         
         // Make some mock data for now
         List<CreditCard> ccs = new ArrayList<CreditCard>();
         int y = 2013;
+        Random r = new Random();
         for(int i = 0; i < 4; i++) {
-        	CreditCard cc = new CreditCard("Frank", "Fitchard", "111122223333", 
-        			"July", ++y + "", "492", CreditCardType.MASTER_CARD);
-        	ccs.add(cc);
+        	ParkingSharedPref.setCreditCard(mAppContext, "frank@gmail.com", r.nextInt(Integer.MAX_VALUE), "Frank", "Fitchard", "111122223333",
+                    "July", ++y + "", "492", CreditCardType.MASTER_CARD);
+            for(CreditCard cc : ParkingSharedPref.getAllCreditCards(mAppContext, "frank@gmail.com")) {
+                ccs.add(cc);
+            }
         }
         
         mPagerAdapter = new LicensePlateAdapter(ccs, getApplicationContext());

@@ -3,6 +3,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/app_background"
+                android:layout_centerHorizontal="true"
         >
     <TextView
             android:id="@+id/paid_header"
@@ -23,7 +24,8 @@
 
     <LinearLayout
             android:layout_below="@id/paid_header"
-            android:layout_above="@+id/end_park"
+            android:layout_above="@+id/validate"
+            android:gravity="center_horizontal"
             android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -34,10 +36,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginBottom="-20dp"
-                android:textSize="30sp"
+                android:textSize="28sp"
                 android:textColor="#22222f"
                 android:textStyle="bold"
-                android:text="Remaining:"
+                android:text="REMAINING"
                 />
 
         <LinearLayout
@@ -45,40 +47,71 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 >
-            <TextView
+            <TextSwitcher
+                    android:id="@+id/remaining_hours"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="80sp"
+                    />
+            <!--
+            <TextView
+                    android:id="@+id/remaining_hours"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="60sp"
                     android:textColor="#22222f"
                     android:text="1"
                     android:textStyle="normal"
                     android:gravity="center"
                     />
+                    -->
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="20dp"
-                    android:textSize="80sp"
+                    android:layout_marginRight="10dp"
+                    android:textSize="60sp"
                     android:textColor="#22222f"
                     android:text="H"
                     android:textStyle="bold"
                     android:gravity="center"
                     />
-            <TextView
+            <TextSwitcher
+                    android:id="@+id/remaining_minutes"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="80sp"
+                    />
+            <!--
+            <TextView
+                    android:id="@+id/remaining_minutes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="60sp"
                     android:textColor="#22222f"
                     android:text="30"
                     android:textStyle="normal"
                     android:gravity="center"
                     />
+                    -->
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="80sp"
+                    android:layout_marginRight="10dp"
+                    android:textSize="60sp"
                     android:textColor="#22222f"
                     android:text="M"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    />
+            <TextSwitcher
+                    android:id="@+id/remaining_seconds"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    />
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="60sp"
+                    android:textColor="#22222f"
+                    android:text="S"
                     android:textStyle="bold"
                     android:gravity="center"
                     />
@@ -98,6 +131,7 @@
                     android:text="YOU'RE GOOD UNTIL:"
                     />
             <TextView
+                    android:id="@+id/expiration_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
@@ -123,6 +157,23 @@
                 android:background="@drawable/green_button"
                 />
     </LinearLayout>
+    <Button
+            android:id="@id/validate"
+            android:layout_above="@+id/end_park"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:text="VALIDATE"
+            android:textColor="#ffffff"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:shadowColor="#ff333333"
+            android:shadowDx="2"
+            android:shadowDy="1"
+            android:shadowRadius="15"
+            android:background="@drawable/blue_button"
+            />
     <Button
             android:id="@id/end_park"
             android:layout_width="match_parent"

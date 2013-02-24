@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">ParkIt</string>
-<<<<<<< HEAD
-    <string name="pay">Pay</string>
-    <string name="park">Park</string>
-    <string name="licenseOne">---</string>
-    <string name="licenseTwo">----</string>
-=======
     <string name="pay">PAY</string>
     <string name="park">PARK</string>
->>>>>>> origin/master
 </resources>
