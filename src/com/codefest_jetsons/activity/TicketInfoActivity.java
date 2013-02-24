@@ -2,7 +2,6 @@ package com.codefest_jetsons.activity;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Random;
 import java.util.ArrayList;
 
@@ -13,7 +12,6 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.media.ExifInterface;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -23,9 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.TranslateAnimation;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
