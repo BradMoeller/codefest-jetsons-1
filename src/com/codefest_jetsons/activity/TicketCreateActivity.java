@@ -1,5 +1,6 @@
 package com.codefest_jetsons.activity;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -10,20 +11,25 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.TranslateAnimation;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
-import android.widget.SeekBar;
-import android.widget.TextView;
+import android.widget.*;
 
 import com.codefest_jetsons.LicensePlateAdapter;
 import com.codefest_jetsons.LicensePlateAdapterInterface;
@@ -32,6 +38,7 @@ import com.codefest_jetsons.model.CreditCard;
 import com.codefest_jetsons.model.Vehicle;
 import com.codefest_jetsons.util.ParkingSharedPref;
 import com.google.android.gms.maps.MapFragment;
+import com.googlecode.tesseract.android.TessBaseAPI;
 
 public class TicketCreateActivity extends Activity implements
 		SeekBar.OnSeekBarChangeListener, LicensePlateAdapterInterface, OnClickListener {
@@ -40,7 +47,7 @@ public class TicketCreateActivity extends Activity implements
 	private TextView mHour;
 	private TextView mMinute;
 	private TextView mClock;
-	private PagerAdapter mPagerAdapter;
+	private LicensePlateAdapter mPagerAdapter;
 	private Button mPay;
 	private Context mAppContext;
 	private ViewPager myPager;
@@ -48,11 +55,23 @@ public class TicketCreateActivity extends Activity implements
 	private Animation mUpAnimation;
 	private ImageButton mSliderLayout;
 	private FrameLayout mMapHolder;
-	
+
+    private EditText license1;
+    private EditText license2;
+
 	private final int SNAP_DELTA_MINUTES = 15;
 	private final int mMaxtimeSeconds = 7200; // maximum time in seconds the user can choose
 	private final double COST_PER_MINUTE = 0.01666666666666;
 	private final String USER_ID = "0";
+
+    public static final String PACKAGE_NAME = "com.datumdroid.android.ocr.simple";
+    public static final String DATA_PATH = Environment.getExternalStorageDirectory().toString() + "/SimpleAndroidOCR/";
+    public static final String lang = "eng";
+    private static final String TAG = "SimpleAndroidOCR.java";
+    protected String _path;
+    protected boolean _taken;
+    protected TextView _field;
+    protected static final String PHOTO_TAKEN = "photo_taken";
 
 	/**
 	 * Called when the activity is first created.
@@ -113,7 +132,7 @@ public class TicketCreateActivity extends Activity implements
 		// If hardware acceleration is enabled, you should also remove
 		// clipping on the pager for its children.
 		myPager.setClipChildren(false);
-		
+
 		// Animation stuff
 		AnimationSet set = new AnimationSet(true);
 		// Slide down animation
@@ -161,7 +180,67 @@ public class TicketCreateActivity extends Activity implements
 				startActivity(new Intent(mAppContext, PaymentActivity.class));
 			}
 		});
-	}
+
+
+
+        String[] paths = new String[] { DATA_PATH, DATA_PATH + "tessdata/" };
+
+        for (String path : paths) {
+            File dir = new File(path);
+            if (!dir.exists()) {
+                if (!dir.mkdirs()) {
+                    Log.v(TAG, "ERROR: Creation of directory " + path + " on sdcard failed");
+                    return;
+                } else {
+                    Log.v(TAG, "Created directory " + path + " on sdcard");
+                }
+            }
+
+        }
+
+        // lang.traineddata file with the app (in assets folder)
+        // You can get them at:
+        // http://code.google.com/p/tesseract-ocr/downloads/list
+        // This area needs work and optimization
+        if (!(new File(DATA_PATH + "tessdata/" + lang + ".traineddata")).exists()) {
+            try {
+
+                AssetManager assetManager = getAssets();
+                InputStream in = assetManager.open("tessdata/eng.traineddata");
+                //GZIPInputStream gin = new GZIPInputStream(in);
+                OutputStream out = new FileOutputStream(DATA_PATH
+                        + "tessdata/eng.traineddata");
+
+                // Transfer bytes from in to out
+                byte[] buf = new byte[1024];
+                int len;
+                //while ((lenf = gin.read(buff)) > 0) {
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+                in.close();
+                //gin.close();
+                out.close();
+
+                Log.v(TAG, "Copied " + lang + " traineddata");
+            } catch (IOException e) {
+                Log.e(TAG, "Was unable to copy " + lang + " traineddata " + e.toString());
+            }
+        }
+
+
+        // _image = (ImageView) findViewById(R.id.image);
+        //_field = (TextView) findViewById(R.id.ocr_field);
+        _path = DATA_PATH + "/ocr.jpg";
+
+        ImageButton ib = (ImageButton) findViewById(R.id.sliderLayout);
+        ib.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startCameraActivity();
+            }
+        });
+    }
 
 	@Override
 	public void onProgressChanged(SeekBar seekBar, int progress,
@@ -232,5 +311,131 @@ public class TicketCreateActivity extends Activity implements
 	public void onClick(View arg0) {
 		// TODO NICK 
 	}
+
+    protected void startCameraActivity() {
+        File file = new File(_path);
+        Uri outputFileUri = Uri.fromFile(file);
+
+        final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+
+        startActivityForResult(intent, 0);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        Log.i(TAG, "resultCode: " + resultCode);
+
+        if (resultCode == -1) {
+            onPhotoTaken();
+        } else {
+            Log.v(TAG, "User cancelled");
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(TicketCreateActivity.PHOTO_TAKEN, _taken);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        Log.i(TAG, "onRestoreInstanceState()");
+        if (savedInstanceState.getBoolean(TicketCreateActivity.PHOTO_TAKEN)) {
+            onPhotoTaken();
+        }
+    }
+
+    protected void onPhotoTaken() {
+        _taken = true;
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 4;
+
+        Bitmap bitmap = BitmapFactory.decodeFile(_path, options);
+
+        try {
+            ExifInterface exif = new ExifInterface(_path);
+            int exifOrientation = exif.getAttributeInt(
+                    ExifInterface.TAG_ORIENTATION,
+                    ExifInterface.ORIENTATION_NORMAL);
+
+            Log.v(TAG, "Orient: " + exifOrientation);
+
+            int rotate = 0;
+
+            switch (exifOrientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    rotate = 90;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    rotate = 180;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    rotate = 270;
+                    break;
+            }
+
+            Log.v(TAG, "Rotation: " + rotate);
+
+            if (rotate != 0) {
+
+                // Getting width & height of the given image.
+                int w = bitmap.getWidth();
+                int h = bitmap.getHeight();
+
+                // Setting pre rotate
+                Matrix mtx = new Matrix();
+                mtx.preRotate(rotate);
+
+                // Rotating Bitmap
+                bitmap = Bitmap.createBitmap(bitmap, 0, 0, w, h, mtx, false);
+            }
+
+            // Convert to ARGB_8888, required by tess
+            bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+
+        } catch (IOException e) {
+            Log.e(TAG, "Couldn't correct orientation: " + e.toString());
+        }
+
+        // _image.setImageBitmap( bitmap );
+
+        Log.v(TAG, "Before baseApi");
+
+        TessBaseAPI baseApi = new TessBaseAPI();
+        baseApi.setDebug(true);
+        baseApi.init(DATA_PATH, lang);
+        baseApi.setImage(bitmap);
+
+        String recognizedText = baseApi.getUTF8Text();
+
+        baseApi.end();
+
+        // You now have the text in recognizedText var, you can do anything with it.
+        // We will display a stripped out trimmed alpha-numeric version of it (if lang is eng)
+        // so that garbage doesn't make it to the display.
+
+        Log.v(TAG, "OCRED TEXT: " + recognizedText);
+
+        if ( lang.equalsIgnoreCase("eng") ) {
+            recognizedText = recognizedText.replaceAll("[^a-zA-Z0-9]+", " ");
+        }
+
+        recognizedText = recognizedText.trim();
+
+        if ( recognizedText.length() != 0 ) {
+            if(recognizedText.length() >= 7) {
+                mPagerAdapter.getLicenseEdit(0).get().setText(recognizedText.substring(0, 3));
+                mPagerAdapter.getLicenseEdit(1).get().setText(recognizedText.substring(3, 7));
+            }
+
+            //_field.setText(_field.getText().toString().length() == 0 ? recognizedText : _field.getText() + " " + recognizedText);
+            //_field.setSelection(_field.getText().toString().length());
+        }
+
+        // Cycle done.
+    }
 
 }

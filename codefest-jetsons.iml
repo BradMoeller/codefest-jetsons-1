@@ -40,6 +40,11 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="zxing" level="project" />
     <orderEntry type="library" name="android-support-v4" level="project" />
+    <orderEntry type="library" name="classes" level="project" />
+    <orderEntry type="library" name="google-play-services" level="project" />
+    <orderEntry type="library" name="google-play-services1" level="project" />
+    <orderEntry type="library" name="armeabi" level="project" />
+    <orderEntry type="library" name="armeabi-v7a" level="project" />
   </component>
 </module>
 

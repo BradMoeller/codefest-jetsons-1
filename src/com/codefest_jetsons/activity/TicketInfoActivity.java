@@ -7,6 +7,7 @@ import java.util.Random;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.media.ExifInterface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
