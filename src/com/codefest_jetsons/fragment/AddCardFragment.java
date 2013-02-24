@@ -42,8 +42,7 @@ public class AddCardFragment extends Fragment {
         park.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                long cID = 1234567;
-                String ccType = "Visa";
+                long cID = System.currentTimeMillis();
                 String userID = "frank@gmail.com";
                 ParkingSharedPref.setCreditCard(getActivity(), userID, cID, AddCardFragment.this.cardHolderName.getText().toString(), AddCardFragment.this.cardHolderName.getText().toString(), AddCardFragment.this.cardNumber.getText().toString(), AddCardFragment.this.expirationMM.getText().toString(), AddCardFragment.this.expirationYYYY.getText().toString(), AddCardFragment.this.cvv.getText().toString(), CreditCard.CreditCardType.VISA);
                 startActivity(new Intent(getActivity(), TicketInfoActivity.class));
