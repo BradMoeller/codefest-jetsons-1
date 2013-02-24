@@ -27,6 +27,13 @@
             android:textSize="45sp"
             android:textStyle="bold" />
 
+        <FrameLayout
+            android:id="@+id/mapHolder"
+            android:layout_width="match_parent"
+            android:layout_height="100dp" >
+
+        </FrameLayout>
+
         <com.codefest_jetsons.PagerContainer
             android:id="@+id/pager_container"
             android:layout_width="match_parent"
