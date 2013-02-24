@@ -3,6 +3,7 @@ package com.codefest_jetsons.activity;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
+import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Context;
@@ -52,8 +53,10 @@ public class TicketInfoActivity extends Activity {
 
         Random r = new Random();
         long id = r.nextInt(Integer.MAX_VALUE);
-        ParkingSharedPref.setTicket(mAppContext, "ntate@gmail.com", 50, new Date(), 11, 60, 40.431368, -79.9805);
-        t = ParkingSharedPref.getTicket(mAppContext, "ntate@gmail.com", 50);
+        //ParkingSharedPref.setTicket(mAppContext, "ntate@gmail.com", 50, new Date(), 11, 60, 40.431368, -79.9805);
+        ArrayList<Ticket> allTickets = ParkingSharedPref.getAllTickets(mAppContext, "frank@gmail.com");
+        //t = ParkingSharedPref.getTicket(mAppContext, "ntate@gmail.com", 50);
+        t = allTickets.get(allTickets.size()-1);
 
         ticketTimer = t.getMillisecondsLeft();
 

@@ -43,6 +43,9 @@ public class SelectCardFragment extends Fragment {
                 startActivity(new Intent(mContext, TicketInfoActivity.class));
             }
         });
+
+        String userID = "frank@gmail.com";
+        mCreditCards = ParkingSharedPref.getAllCreditCards(mContext, userID);
 		
 		return view;
 	}

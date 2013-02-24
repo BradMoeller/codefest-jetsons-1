@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
+import java.util.Date;
 
 import android.app.Activity;
 import android.app.FragmentManager;
@@ -83,7 +84,7 @@ public class TicketCreateActivity extends Activity implements
 	private final int mMaxtimeSeconds = 7200; // maximum time in seconds the user can choose
 	private final double COST_PER_MINUTE = 0.01666666666666;
 	private final int LOCATION_UPDATE_INTERVAL = 5000;
-	private final String USER_ID = "0";
+	private final String USER_ID = "frank@gmail.com";
 
     public static final String PACKAGE_NAME = "com.datumdroid.android.ocr.simple";
     public static final String DATA_PATH = Environment.getExternalStorageDirectory().toString() + "/SimpleAndroidOCR/";
@@ -93,6 +94,10 @@ public class TicketCreateActivity extends Activity implements
     protected boolean _taken;
     protected TextView _field;
     protected static final String PHOTO_TAKEN = "photo_taken";
+
+    private int mMinutesPurchased;
+    private double mLatitude;
+    private double mLongitude;
 
 	/**
 	 * Called when the activity is first created.
@@ -131,6 +136,7 @@ public class TicketCreateActivity extends Activity implements
         List<CreditCard> ccs = new ArrayList<CreditCard>();
         int y = 2013;
         Random r = new Random();
+        /*
         if (ParkingSharedPref.getAllVehicles(mAppContext, USER_ID).size() == 1) {
         	// Create some fake data...
         	ParkingSharedPref.setVehicle(mAppContext, USER_ID, 1, "ABC1234");
@@ -138,6 +144,7 @@ public class TicketCreateActivity extends Activity implements
         	ParkingSharedPref.setVehicle(mAppContext, USER_ID, 3, "EGG1337");
         	ParkingSharedPref.setVehicle(mAppContext, USER_ID, 4, "LOL4592");
         }
+        */
         
         for(Vehicle v : ParkingSharedPref.getAllVehicles(mAppContext, USER_ID)) {
         	vhs.add(v);
@@ -200,7 +207,15 @@ public class TicketCreateActivity extends Activity implements
 		mPay.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				startActivity(new Intent(mAppContext, PaymentActivity.class));
+                Vehicle currVehicle = mPagerAdapter.getSelectedVehicle();
+                Log.d("DERP", "CURR VEHICLE: " + currVehicle);
+
+                long ticketID = System.currentTimeMillis();
+                Date d = new Date();
+                int maxTime = mMaxtimeSeconds / 60;
+                ParkingSharedPref.setTicket(mAppContext, USER_ID, ticketID, d, mMinutesPurchased, maxTime, mLatitude, mLongitude);
+
+                startActivity(new Intent(mAppContext, PaymentActivity.class));
 			}
 		});
 
@@ -284,6 +299,8 @@ public class TicketCreateActivity extends Activity implements
 		// calculate the seconds moved
 		// 100 is the max progress, by default
 		int secondsMoved = progress * 60;//(progress * mMaxtimeSeconds) / 100;
+
+        mMinutesPurchased = secondsMoved / 60;
 
 		// update the time
 		int minutes = (secondsMoved / 60) % 60;
@@ -375,7 +392,9 @@ public class TicketCreateActivity extends Activity implements
 		}
 		mMapFragment.getMap().animateCamera(CameraUpdateFactory.newLatLngZoom(ll, 15.0f));
 		mLastMarker = mMapFragment.getMap().addMarker(new MarkerOptions().position(ll));
-		
+
+        mLatitude = lat;
+        mLongitude = lon;
 	}
 	
     protected void startCameraActivity() {

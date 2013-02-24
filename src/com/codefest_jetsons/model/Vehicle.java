@@ -34,4 +34,8 @@ public class Vehicle {
     public void setVehicleId(long vehicleId) {
         this.vehicleId = vehicleId;
     }
+
+    public String toString() {
+        return "{id : "+vehicleId+", licensePlate : "+licensePlate+"}";
+    }
 }
