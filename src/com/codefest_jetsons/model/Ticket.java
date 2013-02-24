@@ -41,6 +41,22 @@ public class Ticket {
         this.endTime = cal.getTime();
     }
 
+    public void updateTicket(int minutesChanged) {
+        long diff = new Date().getTime() - purchaseTime.getTime();
+        int minutes = (int) (diff/1000/60);
+
+        long newDateMilli = new Date().getTime() + diff + minutesChanged*60*1000;
+        Date newDate = new Date(newDateMilli);
+
+        this.purchaseTime = new Date();
+        this.endTime = newDate;
+        this.minutesPurchased = minutes + minutesChanged;
+    }
+
+    public boolean isExpired() {
+       return (endTime.getTime() < new Date().getTime());
+    }
+
     public long getMillisecondsLeft() {
         return endTime.getTime() - new Date().getTime();
     }

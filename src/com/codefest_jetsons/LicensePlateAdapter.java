@@ -11,6 +11,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
@@ -60,13 +61,11 @@ public class LicensePlateAdapter extends PagerAdapter  {
 		return arg0 == ((View) arg1);
 	}
 	
-	
-
 	@Override
 	public void setPrimaryItem(ViewGroup container, int position, Object object) {
 		super.setPrimaryItem(container, position, object);
 		if (position != mPrimaryItem) {
-			if (mPrimaryItem == mVehicles.size()) {
+			if (mPrimaryItem == mVehicles.size() && mPrimaryItem != -1) {
 				mListener.exitedCreatePlate();
 				InputMethodManager im = ((InputMethodManager)mContext.getSystemService(Context.INPUT_METHOD_SERVICE));
 				im.hideSoftInputFromWindow(container.getWindowToken(), 0);
@@ -147,6 +146,8 @@ public class LicensePlateAdapter extends PagerAdapter  {
 		((ViewPager) container).addView(view);
 		return view;
 	}
+	
+	
 
     public WeakReference<EditText> getLicenseEdit(int i) {
         if(i == 0) {
