@@ -128,6 +128,7 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
             countDownTimer.cancel();
         }
         countDownTimer = new CountDownTimer(ticketTimer, SECOND) {
+            @Override
             public void onTick(long millisUntilFinished) {
                 //if(getRemainingHours(millisUntilFinished) < lastH) {
                     lastH = Math.abs(getRemainingHours(millisUntilFinished));
@@ -157,6 +158,7 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
                 //}
             }
 
+            @Override
             public void onFinish() {
 
                 //rMin.setText("DONE");
@@ -317,7 +319,7 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
 		
 		mLocationManager.startGettingLocations(LOCATION_UPDATE_INTERVAL);
 		
-        t = ParkingSharedPref.getTicket(mAppContext, "frank@gmail.com", 50);
+        t = ParkingSharedPref.getTicket(mAppContext, "frank@gmail.com", ParkingSharedPref.getCurrentTicketID(this, "frank@gmail.com"));
         ticketTimer = t.getMillisecondsLeft();
         ParkingNotifications.startNotifications(mAppContext, ticketTimer);
 
@@ -361,6 +363,7 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
                 countDownTimer.cancel();
             }
             countDownTimer = new CountDownTimer(ticketTimer, SECOND) {
+                @Override
                 public void onTick(long millisUntilFinished) {
                     //if(getRemainingHours(millisUntilFinished) < lastH) {
                         lastH = Math.abs(getRemainingHours(millisUntilFinished));
@@ -390,6 +393,7 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
                     //}
                 }
 
+                @Override
                 public void onFinish() {
                     Log.d("DERP", "DERP ON FINISH EXPIRED");
                     TextView header = (TextView) findViewById(R.id.paid_header);
@@ -457,6 +461,7 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
         ParkingSharedPref.setTicket(mAppContext, "frank@gmail.com", currTicketID, t.getPurchaseTime(), t.getMinutesPurchased(),
                 t.getMaxMinutes(), t.getLatitude(), t.getLongitude());
         t = ParkingSharedPref.getTicket(mAppContext, "frank@gmail.com", currTicketID);
+
         TextView header = (TextView) findViewById(R.id.paid_header);
         header.setText("PAID");
         header.setBackgroundResource(R.drawable.green_gradient);
@@ -604,6 +609,8 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
             minutesChanged = minutes;
 
 			int hours = (secondsMoved / (60 * 60)) % 24;
+            minutesChanged += hours*60;
+
 			mMinute.setText(String.format("%02d", minutes));
 			mHour.setText(String.format("%02d", hours));
 			

@@ -59,7 +59,7 @@ public class ParkingNotifications {
                 (NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
 
         Notification notification = mBuilder.build();
-        notification.flags = Notification.FLAG_AUTO_CANCEL;
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
 
         mNotificationManager.notify(notificationID, notification);
     }

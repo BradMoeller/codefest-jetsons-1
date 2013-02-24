@@ -43,6 +43,7 @@ public class Ticket {
 
     public void updateTicket(int minutesChanged) {
         long diff = new Date().getTime() - purchaseTime.getTime();
+
         int minutes = (int) (diff/1000/60);
 
         long newDateMilli = new Date().getTime() + diff + minutesChanged*60*1000;
