@@ -230,7 +230,9 @@ public class TicketCreateActivity extends Activity implements
                 long ticketID = System.currentTimeMillis();
                 Date d = new Date();
                 int maxTime = mMaxtimeSeconds / 60;
-                ParkingSharedPref.setTicket(mAppContext, USER_ID, ticketID, d, mMinutesPurchased, maxTime, mLatitude, mLongitude);
+                ParkingSharedPref.setTicket(mAppContext, "frank@gmail.com", ticketID, d, mMinutesPurchased, maxTime, mLatitude, mLongitude);
+
+                ParkingSharedPref.setCurrentTicketID(mAppContext, "frank@gmail.com", ticketID);
 
                 startActivity(new Intent(mAppContext, PaymentActivity.class));
 			}

@@ -30,7 +30,8 @@ public class ValidateActivity extends Activity {
 
 
         final LinearLayout container = (LinearLayout) findViewById(R.id.qr_container);
-        if(ParkingSharedPref.getValidated(mAppContext, "ntate22@gmail.com", "12345")) {
+        String currTicketID = String.valueOf(ParkingSharedPref.getCurrentTicketID(mAppContext, "frank@gmail.com"));
+        if(ParkingSharedPref.getValidated(mAppContext, "frank@gmail.com", currTicketID)) {
             TextView tv = (TextView) getLayoutInflater().inflate(R.layout.ticket_timer_tv, null, false);
             tv.setText("VALIDATED");
             container.addView(tv);
@@ -41,8 +42,8 @@ public class ValidateActivity extends Activity {
             mRunnable = new Runnable() {
                 @Override
                 public void run() {
-                    // fake data
-                    ParkingSharedPref.setValidated(mAppContext, "ntate22@gmail.com", "12345", true);
+                    String theCurrTicketID = String.valueOf(ParkingSharedPref.getCurrentTicketID(mAppContext, "frank@gmail.com"));
+                    ParkingSharedPref.setValidated(mAppContext, "frank@gmail.com", theCurrTicketID, true);
                     qr.setVisibility(View.GONE);
                     TextView tv = (TextView) getLayoutInflater().inflate(R.layout.ticket_timer_tv, null, false);
                     tv.setText("VALIDATED");

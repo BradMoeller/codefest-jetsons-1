@@ -82,7 +82,7 @@
                     android:layout_marginRight="10dp"
                     android:gravity="center"
                     android:text="H"
-                    android:textColor="#22222f"
+                    android:textColor="#66666f"
                     android:textSize="60sp"
                     android:textStyle="bold" />
 
@@ -109,7 +109,7 @@
                     android:layout_marginRight="10dp"
                     android:gravity="center"
                     android:text="M"
-                    android:textColor="#22222f"
+                    android:textColor="#66666f"
                     android:textSize="60sp"
                     android:textStyle="bold" />
 
@@ -123,7 +123,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="S"
-                    android:textColor="#22222f"
+                    android:textColor="#66666f"
                     android:textSize="60sp"
                     android:textStyle="bold" />
         </LinearLayout>
@@ -164,7 +164,7 @@
                 android:shadowDx="2"
                 android:shadowDy="1"
                 android:shadowRadius="15"
-                android:text="ADD TIME"
+                android:text="EXTEND PARKING"
                 android:textColor="#ffffff"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -191,7 +191,7 @@
             android:shadowDx="2"
             android:shadowDy="1"
             android:shadowRadius="15"
-            android:text="VALIDATE"
+            android:text="VALIDATE PARKING"
             android:textColor="#ffffff"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -207,7 +207,7 @@
             android:shadowDx="2"
             android:shadowDy="1"
             android:shadowRadius="15"
-            android:text="END PARK"
+            android:text="LEAVE PARKING SPOT"
             android:textColor="#ffffff"
             android:textSize="20sp"
             android:textStyle="bold" />
