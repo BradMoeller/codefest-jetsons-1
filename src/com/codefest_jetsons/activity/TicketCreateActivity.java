@@ -1,6 +1,10 @@
 package com.codefest_jetsons.activity;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -15,13 +19,13 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.location.Location;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
@@ -31,7 +35,12 @@ import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationSet;
 import android.view.animation.TranslateAnimation;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.codefest_jetsons.LicensePlateAdapter;
 import com.codefest_jetsons.LicensePlateAdapterInterface;
@@ -64,13 +73,12 @@ public class TicketCreateActivity extends Activity implements
 	private ImageButton mSliderLayout;
 	private FrameLayout mMapHolder;
 
-    private EditText license1;
-    private EditText license2;
-
 	private MyLocationManager mLocationManager;
 	private MapFragment mMapFragment;
 	private Marker mLastMarker;
-	
+    private EditText license1;
+    private EditText license2;
+
 	private final int SNAP_DELTA_MINUTES = 15;
 	private final int mMaxtimeSeconds = 7200; // maximum time in seconds the user can choose
 	private final double COST_PER_MINUTE = 0.01666666666666;
@@ -261,8 +269,6 @@ public class TicketCreateActivity extends Activity implements
 		mLocationManager.stopGettingLocations();
 	}
 
-
-
 	@Override
 	protected void onResume() {
 		mLocationManager.startGettingLocations(LOCATION_UPDATE_INTERVAL);
@@ -270,8 +276,6 @@ public class TicketCreateActivity extends Activity implements
 		mMapFragment.getMap().getUiSettings().setAllGesturesEnabled(false);
 		super.onResume();
 	}
-
-
 
 	@Override
 	public void onProgressChanged(SeekBar seekBar, int progress,
@@ -345,6 +349,35 @@ public class TicketCreateActivity extends Activity implements
 		// TODO NICK 
 	}
 
+	@Override
+	public void onAnimationEnd(Animation arg0) {
+		mSliderLayout.setVisibility(View.GONE);
+		mSliderLayout.setEnabled(false);
+	}
+
+	@Override
+	public void onAnimationRepeat(Animation arg0) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void onAnimationStart(Animation arg0) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void gotLocation(Location location) {
+		double lat = location.getLatitude();
+		double lon = location.getLongitude();
+		LatLng ll = new LatLng(lat, lon);
+		if (mLastMarker != null) {
+			mLastMarker.remove();
+		}
+		mMapFragment.getMap().animateCamera(CameraUpdateFactory.newLatLngZoom(ll, 15.0f));
+		mLastMarker = mMapFragment.getMap().addMarker(new MarkerOptions().position(ll));
+		
+	}
+	
     protected void startCameraActivity() {
         File file = new File(_path);
         Uri outputFileUri = Uri.fromFile(file);
@@ -470,34 +503,5 @@ public class TicketCreateActivity extends Activity implements
 
         // Cycle done.
     }
-
-	@Override
-	public void onAnimationEnd(Animation arg0) {
-		mSliderLayout.setVisibility(View.GONE);
-		mSliderLayout.setEnabled(false);
-	}
-
-	@Override
-	public void onAnimationRepeat(Animation arg0) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void onAnimationStart(Animation arg0) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void gotLocation(Location location) {
-		double lat = location.getLatitude();
-		double lon = location.getLongitude();
-		LatLng ll = new LatLng(lat, lon);
-		if (mLastMarker != null) {
-			mLastMarker.remove();
-		}
-		mMapFragment.getMap().animateCamera(CameraUpdateFactory.newLatLngZoom(ll, 15.0f));
-		mLastMarker = mMapFragment.getMap().addMarker(new MarkerOptions().position(ll));
-		
-	}
 
 }
