@@ -2,7 +2,6 @@ package com.codefest_jetsons.activity;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Random;
 import java.util.ArrayList;
 
@@ -13,7 +12,6 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.media.ExifInterface;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -24,9 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.TranslateAnimation;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
@@ -132,6 +128,7 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
             countDownTimer.cancel();
         }
         countDownTimer = new CountDownTimer(ticketTimer, SECOND) {
+            @Override
             public void onTick(long millisUntilFinished) {
                 //if(getRemainingHours(millisUntilFinished) < lastH) {
                     lastH = Math.abs(getRemainingHours(millisUntilFinished));
@@ -161,6 +158,7 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
                 //}
             }
 
+            @Override
             public void onFinish() {
 
                 //rMin.setText("DONE");
@@ -320,9 +318,7 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
 		mMapFragment.getMap().setOnMarkerClickListener(this);
 		
 		mLocationManager.startGettingLocations(LOCATION_UPDATE_INTERVAL);
-
-        long ticketID = ParkingSharedPref.getCurrentTicketID(mAppContext, "frank@gmail.com");
-        t = ParkingSharedPref.getTicket(mAppContext, "frank@gmail.com", ticketID);
+        t = ParkingSharedPref.getTicket(mAppContext, "frank@gmail.com", ParkingSharedPref.getCurrentTicketID(this, "frank@gmail.com"));
         ticketTimer = t.getMillisecondsLeft();
         ParkingNotifications.startNotifications(mAppContext, ticketTimer);
 
@@ -366,6 +362,7 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
                 countDownTimer.cancel();
             }
             countDownTimer = new CountDownTimer(ticketTimer, SECOND) {
+                @Override
                 public void onTick(long millisUntilFinished) {
                     //if(getRemainingHours(millisUntilFinished) < lastH) {
                         lastH = Math.abs(getRemainingHours(millisUntilFinished));
@@ -395,6 +392,7 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
                     //}
                 }
 
+                @Override
                 public void onFinish() {
                     Log.d("DERP", "DERP ON FINISH EXPIRED");
                     TextView header = (TextView) findViewById(R.id.paid_header);
@@ -462,6 +460,7 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
         ParkingSharedPref.setTicket(mAppContext, "frank@gmail.com", currTicketID, t.getPurchaseTime(), t.getMinutesPurchased(),
                 t.getMaxMinutes(), t.getLatitude(), t.getLongitude());
         t = ParkingSharedPref.getTicket(mAppContext, "frank@gmail.com", currTicketID);
+
         TextView header = (TextView) findViewById(R.id.paid_header);
         header.setText("PAID");
         header.setBackgroundResource(R.drawable.green_gradient);
@@ -572,6 +571,11 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
 				}
 			});
 			
+			// update the clock
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTimeInMillis(System.currentTimeMillis());
+			setClockTime(calendar);
+			
 			mTimeBar.setMax((mMaxtimeSeconds/60)/SNAP_DELTA_MINUTES);
 			mTimeBar.setOnSeekBarChangeListener(this);
 			
@@ -609,6 +613,8 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
             minutesChanged = minutes;
 
 			int hours = (secondsMoved / (60 * 60)) % 24;
+            minutesChanged += hours*60;
+
 			mMinute.setText(String.format("%02d", minutes));
 			mHour.setText(String.format("%02d", hours));
 			
