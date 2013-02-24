@@ -22,6 +22,7 @@ import android.graphics.Matrix;
 import android.location.Location;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -51,11 +52,10 @@ import com.codefest_jetsons.util.MyLocationManager;
 import com.codefest_jetsons.util.ParkingSharedPref;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.MapFragment;
+import com.googlecode.tesseract.android.TessBaseAPI;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.googlecode.tesseract.android.TessBaseAPI;
-
 
 public class TicketCreateActivity extends Activity implements
 		SeekBar.OnSeekBarChangeListener, LicensePlateAdapterInterface, OnClickListener, AnimationListener, MyLocationListener {
@@ -72,6 +72,7 @@ public class TicketCreateActivity extends Activity implements
 	private Animation mUpAnimation;
 	private ImageButton mSliderLayout;
 	private FrameLayout mMapHolder;
+
 	private MyLocationManager mLocationManager;
 	private MapFragment mMapFragment;
 	private Marker mLastMarker;
@@ -202,8 +203,8 @@ public class TicketCreateActivity extends Activity implements
 				startActivity(new Intent(mAppContext, PaymentActivity.class));
 			}
 		});
-		
-		String[] paths = new String[] { DATA_PATH, DATA_PATH + "tessdata/" };
+
+        String[] paths = new String[] { DATA_PATH, DATA_PATH + "tessdata/" };
 
         for (String path : paths) {
             File dir = new File(path);
@@ -260,7 +261,7 @@ public class TicketCreateActivity extends Activity implements
                 startCameraActivity();
             }
         });
-	}
+    }
 	
 	@Override
 	protected void onPause() {
