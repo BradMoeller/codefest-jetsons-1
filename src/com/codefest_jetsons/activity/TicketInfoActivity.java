@@ -18,6 +18,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,6 +75,7 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
     private Marker mLastUserMarker;
     private MyLocationManager mLocationManager;
     private Button mAddTime;
+    private Button mEndPark;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -81,14 +83,14 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
         mAppContext = getApplicationContext();
         setContentView(R.layout.ticket_info_activity);
 
-        ParkingSharedPref.clearPrefs(mAppContext); // todo - remove or prefs cleared always - for testing
+        //ParkingSharedPref.clearPrefs(mAppContext); // todo - remove or prefs cleared always - for testing
         setListeners();
 
         Random r = new Random();
         long id = r.nextInt(Integer.MAX_VALUE);
-        //ParkingSharedPref.setTicket(mAppContext, "ntate@gmail.com", 50, new Date(), 11, 60, 40.431368, -79.9805);
+        //ParkingSharedPref.setTicket(mAppContext, "frank@gmail.com", 50, new Date(), 11, 60, 40.431368, -79.9805);
         ArrayList<Ticket> allTickets = ParkingSharedPref.getAllTickets(mAppContext, "frank@gmail.com");
-        //t = ParkingSharedPref.getTicket(mAppContext, "ntate@gmail.com", 50);
+        //t = ParkingSharedPref.getTicket(mAppContext, "frank@gmail.com", 50);
         t = allTickets.get(allTickets.size()-1);
 
         ticketTimer = t.getMillisecondsLeft();
@@ -164,6 +166,7 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
                 //rMin.setText("DONE");
                 //findViewById(R.id.countdown_timer).setVisibility(View.GONE);
                 //findViewById(R.id.expired).setVisibility(View.VISIBLE);
+                Log.d("DERP", "ONFINISH COUNTDOWNTIMER: ");
                 TextView header = (TextView) findViewById(R.id.paid_header);
                 header.setText("EXPIRED");
                 header.setBackgroundResource(R.drawable.red_gradient);
@@ -175,8 +178,9 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
             }
         }.start();
 
-        boolean b = ParkingSharedPref.getValidated(mAppContext, "ntate22@gmail.com", "12345");
-        if(ParkingSharedPref.getValidated(mAppContext, "ntate22@gmail.com", "12345")) {
+        String currTicketID = String.valueOf(ParkingSharedPref.getCurrentTicketID(mAppContext, "frank@gmail.com"));
+        boolean b = ParkingSharedPref.getValidated(mAppContext, "frank@gmail.com", currTicketID);
+        if(ParkingSharedPref.getValidated(mAppContext, "frank@gmail.com", currTicketID)) {
             TextView header = (TextView) findViewById(R.id.paid_header);
             header.setText("VALIDATED");
             header.setBackgroundResource(R.drawable.blue_gradient);
@@ -185,6 +189,7 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
         if(ticketTimer < 0) {
             //findViewById(R.id.countdown_timer).setVisibility(View.GONE);
             //findViewById(R.id.expired).setVisibility(View.VISIBLE);
+            Log.d("DERP", "TICKET TIMER LESS THAN ZERO: "+ticketTimer);
             TextView header = (TextView) findViewById(R.id.paid_header);
             header.setText("EXPIRED");
             header.setBackgroundResource(R.drawable.red_gradient);
@@ -194,9 +199,9 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
         }
 
         /*
-        ParkingSharedPref.setCreditCard(mAppContext, "ntate@gmail.com", id,
+        ParkingSharedPref.setCreditCard(mAppContext, "frank@gmail.com", id,
                 "Nick", "Tate", "4300112233445566", "09", "2014", "554", CreditCard.CreditCardType.MASTER_CARD);
-        CreditCard cc = ParkingSharedPref.getCreditCard(mAppContext, "ntate@gmail.com", id);
+        CreditCard cc = ParkingSharedPref.getCreditCard(mAppContext, "frank@gmail.com", id);
         */
         
         FragmentManager manager = getFragmentManager();
@@ -208,12 +213,22 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
 
         mAddTime = (Button) findViewById(R.id.add_time);
         mAddTime.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				MyDialogFragment df = new MyDialogFragment();
-				df.show(getFragmentManager(), null);
-			}
-		});
+            @Override
+            public void onClick(View v) {
+                MyDialogFragment df = new MyDialogFragment();
+                df.show(getFragmentManager(), null);
+            }
+        });
+
+        mEndPark = (Button) findViewById(R.id.end_park);
+        mEndPark.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(mAppContext, TicketCreateActivity.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(i);
+            }
+        });
     }
 
     private void setListeners() {
@@ -281,7 +296,9 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
     @Override
     public void onResume() {
         super.onResume();
-        if(ParkingSharedPref.getValidated(mAppContext, "ntate22@gmail.com", "12345")) {
+
+        String currTicketID = String.valueOf(ParkingSharedPref.getCurrentTicketID(mAppContext, "frank@gmail.com"));
+        if(ParkingSharedPref.getValidated(mAppContext, "frank@gmail.com", currTicketID)) {
             TextView header = (TextView) findViewById(R.id.paid_header);
             header.setText("VALIDATED");
             header.setBackgroundResource(R.drawable.blue_gradient);
@@ -304,7 +321,7 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
 		
 		mLocationManager.startGettingLocations(LOCATION_UPDATE_INTERVAL);
 		
-        t = ParkingSharedPref.getTicket(mAppContext, "ntate@gmail.com", 50);
+        t = ParkingSharedPref.getTicket(mAppContext, "frank@gmail.com", 50);
         ticketTimer = t.getMillisecondsLeft();
         ParkingNotifications.startNotifications(mAppContext, ticketTimer);
 
@@ -335,6 +352,7 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
         if(ticketTimer < 0) {
             //findViewById(R.id.countdown_timer).setVisibility(View.GONE);
             //findViewById(R.id.expired).setVisibility(View.VISIBLE);
+            Log.d("DERP", "TICKET TIMER: "+ticketTimer);
             TextView header = (TextView) findViewById(R.id.paid_header);
             header.setText("EXPIRED");
             header.setBackgroundResource(R.drawable.red_gradient);
@@ -377,6 +395,7 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
                 }
 
                 public void onFinish() {
+                    Log.d("DERP", "DERP ON FINISH EXPIRED");
                     TextView header = (TextView) findViewById(R.id.paid_header);
                     header.setText("EXPIRED");
                     header.setBackgroundResource(R.drawable.red_gradient);
@@ -437,10 +456,11 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
 
     public void updateTicket(int minutesChanged) {
         t.updateTicket(minutesChanged);
-        ParkingSharedPref.setValidated(mAppContext, "ntate22@gmail.com", "50", false);
-        ParkingSharedPref.setTicket(mAppContext, "ntate@gmail.com", 50, t.getPurchaseTime(), t.getMinutesPurchased(),
+        long currTicketID = ParkingSharedPref.getCurrentTicketID(mAppContext, "frank@gmail.com");
+        ParkingSharedPref.setValidated(mAppContext, "frank@gmail.com", String.valueOf(currTicketID), false);
+        ParkingSharedPref.setTicket(mAppContext, "frank@gmail.com", currTicketID, t.getPurchaseTime(), t.getMinutesPurchased(),
                 t.getMaxMinutes(), t.getLatitude(), t.getLongitude());
-        t = ParkingSharedPref.getTicket(mAppContext, "ntate@gmail.com", 50);
+        t = ParkingSharedPref.getTicket(mAppContext, "frank@gmail.com", currTicketID);
         TextView header = (TextView) findViewById(R.id.paid_header);
         header.setText("PAID");
         header.setBackgroundResource(R.drawable.green_gradient);
@@ -507,6 +527,7 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
 
             public void onFinish() {
                 TextView header = (TextView) findViewById(R.id.paid_header);
+                Log.d("DERP", "DERP 2 EXPIRED LOL");
                 header.setText("EXPIRED");
                 header.setBackgroundResource(R.drawable.red_gradient);
                 TextView expirationTime = (TextView) findViewById(R.id.expiration_time);

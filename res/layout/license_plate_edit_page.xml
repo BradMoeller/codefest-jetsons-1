@@ -25,7 +25,8 @@
         android:maxLines="1"
         android:textAllCaps="true"
         android:textColor="#003F78"
-        android:textSize="50dp" />
+        android:textSize="50dp"
+    />
 
     <EditText
         android:id="@+id/firstText"
@@ -40,7 +41,9 @@
         android:maxLength="3"
         android:maxLines="1"
         android:textColor="#003F78"
-        android:textSize="50dp" >
+        android:textSize="50dp"
+        android:cursorVisible="true"
+        >
 
         <requestFocus />
     </EditText>

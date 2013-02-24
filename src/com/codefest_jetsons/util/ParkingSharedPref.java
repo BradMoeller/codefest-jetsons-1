@@ -29,6 +29,7 @@ public class ParkingSharedPref {
     private static final String TICKET_VALIDATED = "com.codefest_jetsons.ticketvalidated";
     private static final String FIRST_LAUNCH_PREF = "com.codefest_jetsons.firstlaunchpref";
     private static final String FIRST_LAUNCH_KEY = "com.codefest_jetsons.firstlaunchkey";
+    private static final String CURRENT_TICKET_PREF = "com.codefest_jetsons.currentticketkey";
 
     public static void clearPrefs(Context ctx) {
         ctx.getSharedPreferences(CREDIT_CARD_PREF, Context.MODE_PRIVATE).edit().clear().commit();
@@ -38,6 +39,7 @@ public class ParkingSharedPref {
         ctx.getSharedPreferences(TICKET_PREF, Context.MODE_PRIVATE).edit().clear().commit();
         ctx.getSharedPreferences(TICKET_IDS_PREF, Context.MODE_PRIVATE).edit().clear().commit();
         ctx.getSharedPreferences(TICKET_VALIDATED, Context.MODE_PRIVATE).edit().clear().commit();
+        ctx.getSharedPreferences(CURRENT_TICKET_PREF, Context.MODE_PRIVATE).edit().clear().commit();
     }
 
     public static void setCreditCard(Context ctx, String userID, long cID, String fname, String lname, String number,
@@ -108,6 +110,19 @@ public class ParkingSharedPref {
             vehicles.add(getVehicle(ctx, userID, Long.parseLong(id)));
         }
         return vehicles;
+    }
+
+    public static void setCurrentTicketID(Context ctx, String userID, long tID) {
+        SharedPreferences.Editor spEditor = ctx.getSharedPreferences(CURRENT_TICKET_PREF, Context.MODE_PRIVATE).edit();
+
+        spEditor.putLong(userID, tID);
+        spEditor.commit();
+    }
+
+    public static long getCurrentTicketID(Context ctx, String userID) {
+        SharedPreferences sp = ctx.getSharedPreferences(CURRENT_TICKET_PREF, Context.MODE_PRIVATE);
+
+        return sp.getLong(userID, 0);
     }
 
     public static void setTicket(Context ctx, String userID, long tID, Date purchaseTime, int minutesPurchased, int maxMinutes, double lat, double lon) {
