@@ -302,7 +302,6 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
             header.setBackgroundResource(R.drawable.blue_gradient);
         }
 
-        
         if (mLastUserMarker != null) {
         	mLastUserMarker.remove();
 		}
@@ -313,8 +312,7 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
 		mMapFragment.getMap().animateCamera(CameraUpdateFactory.newLatLngZoom(ll, 13.0f));
 		mLastUserMarker = mMapFragment.getMap()
 		.addMarker(new MarkerOptions()
-		.position(ll)
-		.icon(BitmapDescriptorFactory.fromResource(R.drawable.car)));
+		.position(ll));
 		mMapFragment.getMap().setOnMarkerClickListener(this);
 		
 		mLocationManager.startGettingLocations(LOCATION_UPDATE_INTERVAL);
@@ -411,7 +409,7 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
 
 	@Override
 	public void gotLocation(Location location) {
-		double lat = location.getLatitude();
+		double lat = location.getLatitude() + 0.00001;
 		double lon = location.getLongitude();
 		final LatLng ll = new LatLng(lat, lon);
 		if (mLastMarker != null) {
@@ -432,9 +430,13 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
                 GoogleMap map = mMapFragment.getMap();
                 if(map != null) {
                     HANDLER_DELAY = 250;
-                    map.animateCamera(CameraUpdateFactory.newLatLngBounds(
-                            new LatLngBounds(southwest, northeast), 30));
-                    mLastMarker = map.addMarker(new MarkerOptions().position(ll));
+                    //map.animateCamera(CameraUpdateFactory.newLatLngBounds(
+                    //        new LatLngBounds(southwest, northeast), 90));
+                    LatLng ll2 = new LatLng(t.getLatitude(), t.getLongitude());
+                    mMapFragment.getMap().animateCamera(CameraUpdateFactory.newLatLngZoom(ll2, 15.0f));
+                    mLastMarker = map.addMarker(new MarkerOptions()
+                    .position(ll)
+            		.icon(BitmapDescriptorFactory.fromResource(R.drawable.car)));
                 }
                 else {
                     Handler myHandler = new Handler();
