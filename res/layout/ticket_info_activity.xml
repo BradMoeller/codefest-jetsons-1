@@ -152,6 +152,13 @@
             android:textColor="#ffffff"
             android:textSize="20sp"
             android:textStyle="bold" />
+        
+        <FrameLayout
+            android:id="@+id/mapHolder"
+            android:layout_width="match_parent"
+            android:layout_height="200dp" >
+
+        </FrameLayout>
     </LinearLayout>
 
     <Button

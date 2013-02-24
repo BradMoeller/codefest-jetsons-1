@@ -5,9 +5,10 @@ import java.util.Date;
 import java.util.Random;
 
 import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
-import android.media.ExifInterface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
@@ -20,9 +21,13 @@ import android.widget.ViewSwitcher;
 
 import com.codefest_jetsons.R;
 import com.codefest_jetsons.model.Ticket;
-import com.codefest_jetsons.service.TicketService;
 import com.codefest_jetsons.util.ParkingNotifications;
 import com.codefest_jetsons.util.ParkingSharedPref;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 /**
  * Created with IntelliJ IDEA. User: nick49rt Date: 2/23/13 Time: 2:59 PM To
@@ -42,6 +47,8 @@ public class TicketInfoActivity extends Activity {
     private int lastH;
     private CountDownTimer countDownTimer;
     private Ticket t;
+    private MapFragment mMapFragment;
+    private Marker mLastMarker;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,7 +59,7 @@ public class TicketInfoActivity extends Activity {
 
         Random r = new Random();
         long id = r.nextInt(Integer.MAX_VALUE);
-        ParkingSharedPref.setTicket(mAppContext, "ntate@gmail.com", 50, new Date(), 11, 60, 40.431368, -79.9805);
+        ParkingSharedPref.setTicket(mAppContext, "ntate@gmail.com", 50, new Date(), 11, 60, -79.9805, 40.431368 );
         t = ParkingSharedPref.getTicket(mAppContext, "ntate@gmail.com", 50);
 
         ticketTimer = t.getMillisecondsLeft();
@@ -112,6 +119,13 @@ public class TicketInfoActivity extends Activity {
                 "Nick", "Tate", "4300112233445566", "09", "2014", "554", CreditCard.CreditCardType.MASTER_CARD);
         CreditCard cc = ParkingSharedPref.getCreditCard(mAppContext, "ntate@gmail.com", id);
         */
+        
+        FragmentManager manager = getFragmentManager();
+	    FragmentTransaction transaction = manager.beginTransaction();
+
+	    mMapFragment = MapFragment.newInstance();
+	    transaction.add(R.id.mapHolder, mMapFragment);           
+	    transaction.commit();
     }
 
     private void setListeners() {
@@ -178,6 +192,16 @@ public class TicketInfoActivity extends Activity {
     @Override
     public void onResume() {
         super.onResume();
+        
+        if (mLastMarker != null) {
+			mLastMarker.remove();
+		}
+        
+        mMapFragment.getMap().getUiSettings().setZoomControlsEnabled(false);
+		mMapFragment.getMap().getUiSettings().setAllGesturesEnabled(false);
+        LatLng ll = new LatLng(t.getLatitude(), t.getLongitude());
+		mMapFragment.getMap().animateCamera(CameraUpdateFactory.newLatLngZoom(ll, 13.0f));
+		mLastMarker = mMapFragment.getMap().addMarker(new MarkerOptions().position(ll));
 
         t = ParkingSharedPref.getTicket(mAppContext, "ntate@gmail.com", 50);
         ticketTimer = t.getMillisecondsLeft();
