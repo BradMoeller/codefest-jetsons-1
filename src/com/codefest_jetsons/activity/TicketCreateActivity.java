@@ -45,12 +45,14 @@ import android.widget.TextView;
 import com.codefest_jetsons.LicensePlateAdapter;
 import com.codefest_jetsons.LicensePlateAdapterInterface;
 import com.codefest_jetsons.R;
+import com.codefest_jetsons.fragment.HeatMapDialogFragment;
 import com.codefest_jetsons.model.CreditCard;
 import com.codefest_jetsons.model.Vehicle;
 import com.codefest_jetsons.util.MyLocationListener;
 import com.codefest_jetsons.util.MyLocationManager;
 import com.codefest_jetsons.util.ParkingSharedPref;
 import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -59,7 +61,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.googlecode.tesseract.android.TessBaseAPI;
 
 public class TicketCreateActivity extends Activity implements
-		SeekBar.OnSeekBarChangeListener, LicensePlateAdapterInterface, OnClickListener, AnimationListener, MyLocationListener {
+		SeekBar.OnSeekBarChangeListener, LicensePlateAdapterInterface, OnClickListener, AnimationListener, MyLocationListener, OnMapClickListener {
 
 	private SeekBar mTimeBar;
 	private TextView mHour;
@@ -113,6 +115,7 @@ public class TicketCreateActivity extends Activity implements
 		mPay = (Button) findViewById(R.id.pay);
 		mSliderLayout = (ImageButton) findViewById(R.id.sliderLayout);
 		mImageOverlay = (ImageView) findViewById(R.id.imageOverlay);
+		mMapHolder = (FrameLayout) findViewById(R.id.mapHolder);
 		
 		mSliderLayout.setOnClickListener(this);
 		
@@ -200,14 +203,14 @@ public class TicketCreateActivity extends Activity implements
 		
 		mImageOverlay.setOnClickListener(this);
 		
-        //AnimationController controller = new LayoutAnimationController(set, 0.25f);
-        
 		FragmentManager manager = getFragmentManager();
 	    FragmentTransaction transaction = manager.beginTransaction();
 
 	    mMapFragment = MapFragment.newInstance();
 	    transaction.add(R.id.mapHolder, mMapFragment);           
 	    transaction.commit();
+	    
+	    mMapHolder.setOnClickListener(this);
 		
         getWindow().setSoftInputMode(
         	    WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -288,6 +291,7 @@ public class TicketCreateActivity extends Activity implements
 		mLocationManager.startGettingLocations(LOCATION_UPDATE_INTERVAL);
 		mMapFragment.getMap().getUiSettings().setZoomControlsEnabled(false);
 		mMapFragment.getMap().getUiSettings().setAllGesturesEnabled(false);
+		mMapFragment.getMap().setOnMapClickListener(this);
 		super.onResume();
 	}
 
@@ -362,6 +366,11 @@ public class TicketCreateActivity extends Activity implements
 	public void onClick(View v) {
 		if (v.getId() == mImageOverlay.getId()) {
 			mImageOverlay.setVisibility(View.GONE);
+		}
+		else if(v.getId() == mMapHolder.getId()) {
+			FragmentManager fm = this.getFragmentManager();
+	        HeatMapDialogFragment df = new HeatMapDialogFragment();
+	        df.show(fm, "fragment_name");
 		}
 		// TODO NICK 
 	}
@@ -523,5 +532,12 @@ public class TicketCreateActivity extends Activity implements
 
         // Cycle done.
     }
+
+	@Override
+	public void onMapClick(LatLng arg0) {
+		FragmentManager fm = this.getFragmentManager();
+        HeatMapDialogFragment df = new HeatMapDialogFragment();
+        df.show(fm, "fragment_name");
+	}
 
 }
