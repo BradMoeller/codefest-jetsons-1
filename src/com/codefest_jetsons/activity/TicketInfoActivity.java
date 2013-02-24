@@ -1,12 +1,14 @@
 package com.codefest_jetsons.activity;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.media.ExifInterface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -42,17 +44,20 @@ public class TicketInfoActivity extends Activity {
     private int lastH;
     private CountDownTimer countDownTimer;
     private Ticket t;
+    private Runnable expiredRunnable;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mAppContext = getApplicationContext();
         setContentView(R.layout.ticket_info_activity);
+
+        ParkingSharedPref.clearPrefs(mAppContext); // todo - remove or prefs cleared always - for testing
         setListeners();
 
         Random r = new Random();
         long id = r.nextInt(Integer.MAX_VALUE);
-        ParkingSharedPref.setTicket(mAppContext, "ntate@gmail.com", 50, new Date(), 11, 60, 40.431368, -79.9805);
+        ParkingSharedPref.setTicket(mAppContext, "ntate@gmail.com", 50, new Date(), 2, 60, 40.431368, -79.9805);
         t = ParkingSharedPref.getTicket(mAppContext, "ntate@gmail.com", 50);
 
         ticketTimer = t.getMillisecondsLeft();
@@ -65,21 +70,38 @@ public class TicketInfoActivity extends Activity {
         loadSwitchers();
 
         lastH = getRemainingHours(ticketTimer);
-        rHours.setCurrentText(lastH + "");
+        if(lastH < 10) {
+            rHours.setCurrentText(lastH + "");
+        }
+        else {
+            rHours.setCurrentText(lastH + "");
+        }
+
         lastM = getRemainingMinutes(ticketTimer);
-        rMin.setCurrentText(lastM + "");
+        if(lastM < 10) {
+            rMin.setCurrentText("0" + lastM);
+        }
+        else {
+            rMin.setCurrentText(lastM + "");
+        }
+
         lastS = getRemainingSeconds(ticketTimer);
-        rSec.setCurrentText(lastS + "");
+        if(lastS < 10) {
+            rSec.setCurrentText("0" + lastS);
+        }
+        else {
+            rSec.setCurrentText(lastS + "");
+        }
 
         countDownTimer = new CountDownTimer(ticketTimer, SECOND) {
             public void onTick(long millisUntilFinished) {
-                if(getRemainingHours(millisUntilFinished) < lastH) {
-                    lastH = getRemainingHours(millisUntilFinished);
+                //if(getRemainingHours(millisUntilFinished) < lastH) {
+                    lastH = Math.abs(getRemainingHours(millisUntilFinished));
                     rHours.setText(lastH+"");
-                }
+                //}
 
-                if(getRemainingMinutes(millisUntilFinished) < lastM || lastM == 0) {
-                    lastM = getRemainingMinutes(millisUntilFinished);
+                //if(getRemainingMinutes(millisUntilFinished) < lastM || lastM == 0) {
+                    lastM = Math.abs(getRemainingMinutes(millisUntilFinished));
 
                     if(lastM < 10) {
                         rMin.setText("0"+lastM);
@@ -87,10 +109,10 @@ public class TicketInfoActivity extends Activity {
                     else {
                         rMin.setText(lastM+"");
                     }
-                }
+                //}
 
-                if(getRemainingSeconds(millisUntilFinished) < lastS || lastS == 0) {
-                    lastS = getRemainingSeconds(millisUntilFinished);
+                //if(getRemainingSeconds(millisUntilFinished) < lastS || lastS == 0) {
+                    lastS = Math.abs(getRemainingSeconds(millisUntilFinished));
 
                     if(lastS < 10) {
                         rSec.setText("0"+lastS);
@@ -98,14 +120,42 @@ public class TicketInfoActivity extends Activity {
                     else {
                         rSec.setText(lastS+"");
                     }
-                }
+                //}
             }
 
             public void onFinish() {
-                //.setText("done!");
-                rMin.setText("DONE");
+
+                //rMin.setText("DONE");
+                //findViewById(R.id.countdown_timer).setVisibility(View.GONE);
+                //findViewById(R.id.expired).setVisibility(View.VISIBLE);
+                TextView header = (TextView) findViewById(R.id.paid_header);
+                header.setText("EXPIRED");
+                header.setBackgroundResource(R.drawable.red_gradient);
+                TextView expirationTime = (TextView) findViewById(R.id.expiration_time);
+                expirationTime.setText("YOUR TICKET HAS EXPIRED");
+                expirationTime.setTextColor(Color.parseColor("#990000"));
+                rSec.setText("00");
+                ((TextView) findViewById(R.id.remaining_text)).setText("TIME EXPIRED");
             }
         }.start();
+
+        boolean b = ParkingSharedPref.getValidated(mAppContext, "ntate22@gmail.com", "12345");
+        if(ParkingSharedPref.getValidated(mAppContext, "ntate22@gmail.com", "12345")) {
+            TextView header = (TextView) findViewById(R.id.paid_header);
+            header.setText("VALIDATED");
+            header.setBackgroundResource(R.drawable.blue_gradient);
+        }
+
+        if(ticketTimer < 0) {
+            //findViewById(R.id.countdown_timer).setVisibility(View.GONE);
+            //findViewById(R.id.expired).setVisibility(View.VISIBLE);
+            TextView header = (TextView) findViewById(R.id.paid_header);
+            header.setText("EXPIRED");
+            header.setBackgroundResource(R.drawable.red_gradient);
+            TextView expirationTime = (TextView) findViewById(R.id.expiration_time);
+            expirationTime.setText("YOUR TICKET HAS EXPIRED");
+            expirationTime.setTextColor(Color.parseColor("#990000"));
+        }
 
         /*
         ParkingSharedPref.setCreditCard(mAppContext, "ntate@gmail.com", id,
@@ -179,52 +229,94 @@ public class TicketInfoActivity extends Activity {
     public void onResume() {
         super.onResume();
 
+        if(ParkingSharedPref.getValidated(mAppContext, "ntate22@gmail.com", "12345")) {
+            TextView header = (TextView) findViewById(R.id.paid_header);
+            header.setText("VALIDATED");
+            header.setBackgroundResource(R.drawable.blue_gradient);
+        }
+
         t = ParkingSharedPref.getTicket(mAppContext, "ntate@gmail.com", 50);
         ticketTimer = t.getMillisecondsLeft();
         ParkingNotifications.startNotifications(mAppContext, ticketTimer);
-        //loadSwitchers();
+
         lastH = getRemainingHours(ticketTimer);
-        rHours.setCurrentText(lastH + "");
+        if(lastH < 10) {
+            rHours.setCurrentText("" + lastH);
+        }
+        else {
+            rHours.setCurrentText(lastH + "");
+        }
+
         lastM = getRemainingMinutes(ticketTimer);
-        rMin.setCurrentText(lastM + "");
+        if(lastM < 10) {
+            rMin.setCurrentText("0" + lastM);
+        }
+        else {
+            rMin.setCurrentText(lastM + "");
+        }
+
         lastS = getRemainingSeconds(ticketTimer);
-        rSec.setCurrentText(lastS + "");
+        if(lastS < 10) {
+            rSec.setCurrentText("0" + lastS);
+        }
+        else {
+            rSec.setCurrentText(lastS + "");
+        }
 
-        countDownTimer = new CountDownTimer(ticketTimer, SECOND) {
-            public void onTick(long millisUntilFinished) {
-                if(getRemainingHours(millisUntilFinished) < lastH) {
-                    lastH = getRemainingHours(millisUntilFinished);
-                    rHours.setText(lastH+"");
+        if(ticketTimer < 0) {
+            //findViewById(R.id.countdown_timer).setVisibility(View.GONE);
+            //findViewById(R.id.expired).setVisibility(View.VISIBLE);
+            TextView header = (TextView) findViewById(R.id.paid_header);
+            header.setText("EXPIRED");
+            header.setBackgroundResource(R.drawable.red_gradient);
+            TextView expirationTime = (TextView) findViewById(R.id.expiration_time);
+            expirationTime.setText("YOUR TICKET HAS EXPIRED");
+            expirationTime.setTextColor(Color.parseColor("#990000"));
+        }
+        else {
+            countDownTimer = new CountDownTimer(ticketTimer, SECOND) {
+                public void onTick(long millisUntilFinished) {
+                    //if(getRemainingHours(millisUntilFinished) < lastH) {
+                        lastH = Math.abs(getRemainingHours(millisUntilFinished));
+                        rHours.setText(lastH+"");
+                    //}
+
+                    //if(getRemainingMinutes(millisUntilFinished) < lastM || lastM == 0) {
+                        lastM = Math.abs(getRemainingMinutes(millisUntilFinished));
+
+                        if(lastM < 10) {
+                            rMin.setText("0"+lastM);
+                        }
+                        else {
+                            rMin.setText(lastM+"");
+                        }
+                    //}
+
+                    //if(getRemainingSeconds(millisUntilFinished) < lastS || lastS == 0) {
+                        lastS = Math.abs(getRemainingSeconds(millisUntilFinished));
+
+                        if(lastS < 10) {
+                            rSec.setText("0"+lastS);
+                        }
+                        else {
+                            rSec.setText(lastS+"");
+                        }
+                    //}
                 }
 
-                if(getRemainingMinutes(millisUntilFinished) < lastM || lastM == 0) {
-                    lastM = getRemainingMinutes(millisUntilFinished);
-
-                    if(lastM < 10) {
-                        rMin.setText("0"+lastM);
-                    }
-                    else {
-                        rMin.setText(lastM+"");
-                    }
+                public void onFinish() {
+                    TextView header = (TextView) findViewById(R.id.paid_header);
+                    header.setText("EXPIRED");
+                    header.setBackgroundResource(R.drawable.red_gradient);
+                    TextView expirationTime = (TextView) findViewById(R.id.expiration_time);
+                    expirationTime.setText("YOUR TICKET HAS EXPIRED");
+                    expirationTime.setTextColor(Color.parseColor("#990000"));
+                    rSec.setText("00");
+                    ((TextView) findViewById(R.id.remaining_text)).setText("TIME EXPIRED");
                 }
+            }.start();
+        }
 
-                if(getRemainingSeconds(millisUntilFinished) < lastS || lastS == 0) {
-                    lastS = getRemainingSeconds(millisUntilFinished);
-
-                    if(lastS < 10) {
-                        rSec.setText("0"+lastS);
-                    }
-                    else {
-                        rSec.setText(lastS+"");
-                    }
-                }
-            }
-
-            public void onFinish() {
-                //.setText("done!");
-                rMin.setText("DONE");
-            }
-        }.start();
     }
 
 }

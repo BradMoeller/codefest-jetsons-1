@@ -41,6 +41,10 @@ public class Ticket {
         this.endTime = cal.getTime();
     }
 
+    public boolean isExpired() {
+       return (endTime.getTime() < new Date().getTime());
+    }
+
     public long getMillisecondsLeft() {
         return endTime.getTime() - new Date().getTime();
     }

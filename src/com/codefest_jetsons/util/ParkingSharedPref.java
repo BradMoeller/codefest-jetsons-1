@@ -26,6 +26,17 @@ public class ParkingSharedPref {
     private static final String VEHICLE_IDS_PREF = "com.codefest_jetsons.vehicleidspref";
     private static final String TICKET_PREF = "com.codefest_jetsons.ticketpref";
     private static final String TICKET_IDS_PREF = "com.codefest_jetsons.ticketidspref";
+    private static final String TICKET_VALIDATED = "com.codefest_jetsons.ticketvalidated";
+
+    public static void clearPrefs(Context ctx) {
+        ctx.getSharedPreferences(CREDIT_CARD_PREF, Context.MODE_PRIVATE).edit().clear().commit();
+        ctx.getSharedPreferences(CREDIT_CARD_IDS_PREF, Context.MODE_PRIVATE).edit().clear().commit();
+        ctx.getSharedPreferences(VEHICLE_PREF, Context.MODE_PRIVATE).edit().clear().commit();
+        ctx.getSharedPreferences(VEHICLE_IDS_PREF, Context.MODE_PRIVATE).edit().clear().commit();
+        ctx.getSharedPreferences(TICKET_PREF, Context.MODE_PRIVATE).edit().clear().commit();
+        ctx.getSharedPreferences(TICKET_IDS_PREF, Context.MODE_PRIVATE).edit().clear().commit();
+        ctx.getSharedPreferences(TICKET_VALIDATED, Context.MODE_PRIVATE).edit().clear().commit();
+    }
 
     public static void setCreditCard(Context ctx, String userID, long cID, String fname, String lname, String number,
                                 String expMonth, String expYear, String ccv, CreditCard.CreditCardType ccType) {
@@ -187,5 +198,13 @@ public class ParkingSharedPref {
     }
     private static HashSet<String> getVehicleIds(Context ctx, String userID) {
         return (HashSet<String>) ctx.getSharedPreferences(VEHICLE_IDS_PREF, Context.MODE_PRIVATE).getStringSet(userID, new HashSet<String>());
+    }
+
+    public static void setValidated(Context ctx, String userID, String uniqueID) {
+        ctx.getSharedPreferences(TICKET_PREF, Context.MODE_PRIVATE).edit().putBoolean(userKeyMap(userID, uniqueID, TICKET_VALIDATED), true).commit();
+    }
+
+    public static boolean getValidated(Context ctx, String userID, String uniqueID) {
+        return ctx.getSharedPreferences(TICKET_PREF, Context.MODE_PRIVATE).getBoolean(userKeyMap(userID, uniqueID, TICKET_VALIDATED), false);
     }
 }
