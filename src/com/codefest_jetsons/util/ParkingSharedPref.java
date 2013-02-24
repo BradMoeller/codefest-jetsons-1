@@ -134,6 +134,8 @@ public class ParkingSharedPref {
         ticketInfo.put(userKeyMap(userID, ticketID, Ticket.PURCHASE_TIME), String.valueOf(purchaseTime.getTime()));
         ticketInfo.put(userKeyMap(userID, ticketID, Ticket.MINUTES_PURCHASED), String.valueOf(minutesPurchased));
         ticketInfo.put(userKeyMap(userID, ticketID, Ticket.MAX_MINUTES), String.valueOf(maxMinutes));
+        ticketInfo.put(userKeyMap(userID, ticketID, Ticket.LATITUDE), String.valueOf(lat));
+        ticketInfo.put(userKeyMap(userID, ticketID, Ticket.LONGTIUDE), String.valueOf(lon));
 
         putMap(spEditor, ticketInfo);
         spEditor.commit();

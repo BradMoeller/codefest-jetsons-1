@@ -543,8 +543,8 @@ public class TicketCreateActivity extends Activity implements
 
         if ( recognizedText.length() != 0 ) {
             if(recognizedText.length() >= 7) {
-                mPagerAdapter.getLicenseEdit(0).get().setText(recognizedText.substring(0, 3));
-                mPagerAdapter.getLicenseEdit(1).get().setText(recognizedText.substring(3, 7));
+                mPagerAdapter.getLicenseEdit(0).get().setText(recognizedText.substring(0, 3).toUpperCase());
+                mPagerAdapter.getLicenseEdit(1).get().setText(recognizedText.substring(3, 7).toUpperCase());
             }
 
             //_field.setText(_field.getText().toString().length() == 0 ? recognizedText : _field.getText() + " " + recognizedText);
