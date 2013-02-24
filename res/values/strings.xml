@@ -3,6 +3,4 @@
     <string name="app_name">ParkIt</string>
     <string name="pay">PAY</string>
     <string name="park">PARK</string>
-    <string name="licenseOne">---</string>
-    <string name="licenseTwo">----</string>
 </resources>

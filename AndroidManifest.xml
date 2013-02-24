@@ -13,6 +13,6 @@
            </intent-filter>    
         </activity>
         <activity android:name=".activity.TicketInfoActivity" android:screenOrientation="portrait" />
-        
+        <activity android:name=".activity.ValidateActivity" android:screenOrientation="portrait" />
     </application>
 </manifest>

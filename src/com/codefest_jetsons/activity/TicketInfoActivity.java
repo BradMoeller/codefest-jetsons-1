@@ -2,6 +2,7 @@ package com.codefest_jetsons.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -9,6 +10,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
@@ -16,6 +18,7 @@ import com.codefest_jetsons.R;
 import com.codefest_jetsons.model.Ticket;
 import com.codefest_jetsons.util.ParkingSharedPref;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 
@@ -44,6 +47,7 @@ public class TicketInfoActivity extends Activity {
         super.onCreate(savedInstanceState);
         mAppContext = getApplicationContext();
         setContentView(R.layout.ticket_info_activity);
+        setListeners();
 
         Random r = new Random();
         long id = r.nextInt(Integer.MAX_VALUE);
@@ -52,7 +56,8 @@ public class TicketInfoActivity extends Activity {
 
         ticketTimer = t.getMillisecondsLeft();
         final TextView endTime = (TextView) findViewById(R.id.expiration_time);
-        endTime.setText(t.getEndTime().toString());
+        SimpleDateFormat s = new SimpleDateFormat("h:m a");
+        endTime.setText(s.format(t.getEndTime()));
         loadSwitchers();
 
         lastH = getRemainingHours(ticketTimer);
@@ -71,14 +76,26 @@ public class TicketInfoActivity extends Activity {
                     rHours.setText(lastH+"");
                 }
 
-                if(getRemainingMinutes(ticketTimer) < lastM) {
+                if(getRemainingMinutes(ticketTimer) < lastM || lastM == 0) {
                     lastM = getRemainingMinutes(ticketTimer);
-                    rMin.setText(lastM+"");
+
+                    if(lastM < 10) {
+                        rMin.setText("0"+lastM);
+                    }
+                    else {
+                        rMin.setText(lastM+"");
+                    }
                 }
 
-                if(getRemainingSeconds(ticketTimer) < lastS) {
+                if(getRemainingSeconds(ticketTimer) < lastS || lastS == 0) {
                     lastS = getRemainingSeconds(ticketTimer);
-                    rSec.setText(lastS+"");
+
+                    if(lastS < 10) {
+                        rSec.setText("0"+lastS);
+                    }
+                    else {
+                        rSec.setText(lastS+"");
+                    }
                 }
             }
 
@@ -95,6 +112,16 @@ public class TicketInfoActivity extends Activity {
         */
     }
 
+    private void setListeners() {
+        Button validate = (Button) findViewById(R.id.validate);
+        validate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(TicketInfoActivity.this, ValidateActivity.class));
+            }
+        });
+
+    }
 
     private int getRemainingHours(long milli) {
         int hours = (int) ((milli/1000)/60/60);
@@ -132,8 +159,10 @@ public class TicketInfoActivity extends Activity {
 
         Animation in = AnimationUtils.loadAnimation(this,
                 android.R.anim.fade_in);
+        in.setDuration(200);
         Animation out = AnimationUtils.loadAnimation(this,
                 android.R.anim.fade_out);
+        out.setDuration(200);
         mSwitcher.setInAnimation(in);
         mSwitcher.setOutAnimation(out);
     }
