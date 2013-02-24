@@ -1,12 +1,17 @@
 package com.codefest_jetsons.util;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+
 import android.content.Context;
 import android.content.SharedPreferences;
+
 import com.codefest_jetsons.model.CreditCard;
 import com.codefest_jetsons.model.Ticket;
 import com.codefest_jetsons.model.Vehicle;
-
-import java.util.*;
 
 /**
  * User: nick49rt

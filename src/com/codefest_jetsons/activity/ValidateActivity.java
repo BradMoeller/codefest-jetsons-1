@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.widget.LinearLayout;
+
 import com.codefest_jetsons.R;
 import com.codefest_jetsons.components.QRCode;
 
