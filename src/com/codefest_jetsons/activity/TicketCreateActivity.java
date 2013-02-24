@@ -12,15 +12,12 @@ import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
-<<<<<<< HEAD
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.LayoutAnimationController;
 import android.view.animation.TranslateAnimation;
-=======
->>>>>>> abhi/master
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
@@ -29,6 +26,7 @@ import android.widget.TextView;
 import com.codefest_jetsons.LicensePlateAdapter;
 import com.codefest_jetsons.LicensePlateAdapterInterface;
 import com.codefest_jetsons.R;
+import com.codefest_jetsons.model.CreditCard;
 import com.codefest_jetsons.model.Vehicle;
 import com.codefest_jetsons.util.ParkingSharedPref;
 
@@ -77,17 +75,14 @@ public class TicketCreateActivity extends Activity implements
 		setClockTime(calendar);
 
 		mTimeBar.setOnSeekBarChangeListener(this);
-<<<<<<< HEAD
 		mTimeBar.setMax((mMaxtimeSeconds/60)/SNAP_DELTA_MINUTES);
 		
 		//mTimeBar.setMax(max)
 		 // Make some mock data for now
         List<Vehicle> vhs = new ArrayList<Vehicle>();
-=======
 
 		// Make some mock data for now
         List<CreditCard> ccs = new ArrayList<CreditCard>();
->>>>>>> abhi/master
         int y = 2013;
         Random r = new Random();
         if (ParkingSharedPref.getAllVehicles(mAppContext, USER_ID).size() == 0) {
@@ -115,7 +110,6 @@ public class TicketCreateActivity extends Activity implements
 		// clipping on the pager for its children.
 		myPager.setClipChildren(false);
 		
-<<<<<<< HEAD
 		// Animation stuff
 		AnimationSet set = new AnimationSet(true);
 		// Slide down animation
@@ -149,14 +143,12 @@ public class TicketCreateActivity extends Activity implements
         
         getWindow().setSoftInputMode(
         	    WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-=======
 		mPay.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				startActivity(new Intent(mAppContext, PaymentActivity.class));
 			}
 		});
->>>>>>> abhi/master
 	}
 
 	@Override
