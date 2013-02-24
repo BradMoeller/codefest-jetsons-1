@@ -19,27 +19,28 @@ import android.widget.ViewSwitcher;
 
 import com.codefest_jetsons.R;
 import com.codefest_jetsons.model.Ticket;
+import com.codefest_jetsons.service.TicketService;
+import com.codefest_jetsons.util.ParkingNotifications;
 import com.codefest_jetsons.util.ParkingSharedPref;
 
 /**
- * Created with IntelliJ IDEA.
- * User: nick49rt
- * Date: 2/23/13
- * Time: 2:59 PM
- * To change this template use File | Settings | File Templates.
+ * Created with IntelliJ IDEA. User: nick49rt Date: 2/23/13 Time: 2:59 PM To
+ * change this template use File | Settings | File Templates.
  */
 public class TicketInfoActivity extends Activity {
     private Context mAppContext;
 
-    private static long ticketTimer;
+    private long ticketTimer;
     private static final int SECOND = 1000;
 
     private TextSwitcher rHours;
     private TextSwitcher rMin;
     private TextSwitcher rSec;
-    private static int lastS;
-    private static int lastM;
-    private static int lastH;
+    private int lastS;
+    private int lastM;
+    private int lastH;
+    private CountDownTimer countDownTimer;
+    private Ticket t;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,33 +51,34 @@ public class TicketInfoActivity extends Activity {
 
         Random r = new Random();
         long id = r.nextInt(Integer.MAX_VALUE);
-        ParkingSharedPref.setTicket(mAppContext, "ntate@gmail.com", id, new Date(), 120, 180);
-        final Ticket t = ParkingSharedPref.getTicket(mAppContext, "ntate@gmail.com", id);
+        ParkingSharedPref.setTicket(mAppContext, "ntate@gmail.com", 50, new Date(), 11, 60);
+        t = ParkingSharedPref.getTicket(mAppContext, "ntate@gmail.com", 50);
 
         ticketTimer = t.getMillisecondsLeft();
+
+        //ParkingNotifications.startNotifications(mAppContext, ticketTimer);
+
         final TextView endTime = (TextView) findViewById(R.id.expiration_time);
         SimpleDateFormat s = new SimpleDateFormat("h:m a");
         endTime.setText(s.format(t.getEndTime()));
         loadSwitchers();
 
         lastH = getRemainingHours(ticketTimer);
-        rHours.setText(lastH+"");
+        rHours.setCurrentText(lastH + "");
         lastM = getRemainingMinutes(ticketTimer);
-        rMin.setText(lastM+"");
+        rMin.setCurrentText(lastM + "");
         lastS = getRemainingSeconds(ticketTimer);
-        rSec.setText(lastS+"");
+        rSec.setCurrentText(lastS + "");
 
-        new CountDownTimer(ticketTimer, SECOND) {
+        countDownTimer = new CountDownTimer(ticketTimer, SECOND) {
             public void onTick(long millisUntilFinished) {
-                ticketTimer -= SECOND;
-
-                if(getRemainingHours(ticketTimer) < lastH) {
-                    lastH = getRemainingHours(ticketTimer);
+                if(getRemainingHours(millisUntilFinished) < lastH) {
+                    lastH = getRemainingHours(millisUntilFinished);
                     rHours.setText(lastH+"");
                 }
 
-                if(getRemainingMinutes(ticketTimer) < lastM || lastM == 0) {
-                    lastM = getRemainingMinutes(ticketTimer);
+                if(getRemainingMinutes(millisUntilFinished) < lastM || lastM == 0) {
+                    lastM = getRemainingMinutes(millisUntilFinished);
 
                     if(lastM < 10) {
                         rMin.setText("0"+lastM);
@@ -86,8 +88,8 @@ public class TicketInfoActivity extends Activity {
                     }
                 }
 
-                if(getRemainingSeconds(ticketTimer) < lastS || lastS == 0) {
-                    lastS = getRemainingSeconds(ticketTimer);
+                if(getRemainingSeconds(millisUntilFinished) < lastS || lastS == 0) {
+                    lastS = getRemainingSeconds(millisUntilFinished);
 
                     if(lastS < 10) {
                         rSec.setText("0"+lastS);
@@ -164,6 +166,64 @@ public class TicketInfoActivity extends Activity {
         out.setDuration(200);
         mSwitcher.setInAnimation(in);
         mSwitcher.setOutAnimation(out);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        countDownTimer.cancel();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        t = ParkingSharedPref.getTicket(mAppContext, "ntate@gmail.com", 50);
+        ticketTimer = t.getMillisecondsLeft();
+        ParkingNotifications.startNotifications(mAppContext, ticketTimer);
+        //loadSwitchers();
+        lastH = getRemainingHours(ticketTimer);
+        rHours.setCurrentText(lastH + "");
+        lastM = getRemainingMinutes(ticketTimer);
+        rMin.setCurrentText(lastM + "");
+        lastS = getRemainingSeconds(ticketTimer);
+        rSec.setCurrentText(lastS + "");
+
+        countDownTimer = new CountDownTimer(ticketTimer, SECOND) {
+            public void onTick(long millisUntilFinished) {
+                if(getRemainingHours(millisUntilFinished) < lastH) {
+                    lastH = getRemainingHours(millisUntilFinished);
+                    rHours.setText(lastH+"");
+                }
+
+                if(getRemainingMinutes(millisUntilFinished) < lastM || lastM == 0) {
+                    lastM = getRemainingMinutes(millisUntilFinished);
+
+                    if(lastM < 10) {
+                        rMin.setText("0"+lastM);
+                    }
+                    else {
+                        rMin.setText(lastM+"");
+                    }
+                }
+
+                if(getRemainingSeconds(millisUntilFinished) < lastS || lastS == 0) {
+                    lastS = getRemainingSeconds(millisUntilFinished);
+
+                    if(lastS < 10) {
+                        rSec.setText("0"+lastS);
+                    }
+                    else {
+                        rSec.setText(lastS+"");
+                    }
+                }
+            }
+
+            public void onFinish() {
+                //.setText("done!");
+                rMin.setText("DONE");
+            }
+        }.start();
     }
 
 }

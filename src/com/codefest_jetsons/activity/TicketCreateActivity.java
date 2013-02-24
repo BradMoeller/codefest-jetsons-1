@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -27,6 +28,7 @@ import android.widget.TextView;
 import com.codefest_jetsons.LicensePlateAdapter;
 import com.codefest_jetsons.LicensePlateAdapterInterface;
 import com.codefest_jetsons.R;
+import com.codefest_jetsons.model.CreditCard;
 import com.codefest_jetsons.model.Vehicle;
 import com.codefest_jetsons.util.ParkingSharedPref;
 import com.google.android.gms.maps.MapFragment;
@@ -58,6 +60,7 @@ public class TicketCreateActivity extends Activity implements
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 		mAppContext = getApplicationContext();
 		setContentView(R.layout.ticket_creation_activity);
 
@@ -81,6 +84,9 @@ public class TicketCreateActivity extends Activity implements
 		//mTimeBar.setMax(max)
 		 // Make some mock data for now
         List<Vehicle> vhs = new ArrayList<Vehicle>();
+
+		// Make some mock data for now
+        List<CreditCard> ccs = new ArrayList<CreditCard>();
         int y = 2013;
         Random r = new Random();
         if (ParkingSharedPref.getAllVehicles(mAppContext, USER_ID).size() == 0) {
@@ -102,13 +108,11 @@ public class TicketCreateActivity extends Activity implements
 		// make this at least however many pages you can see
 		myPager.setOffscreenPageLimit(mPagerAdapter.getCount());
 		// A little space between pages
-		myPager.setPageMargin(15);
+		//myPager.setPageMargin(15);
 		//myPager.setOnPageChangeListener(this);
 		// If hardware acceleration is enabled, you should also remove
 		// clipping on the pager for its children.
 		myPager.setClipChildren(false);
-		
-		
 		
 		// Animation stuff
 		AnimationSet set = new AnimationSet(true);
@@ -151,6 +155,12 @@ public class TicketCreateActivity extends Activity implements
 		
         getWindow().setSoftInputMode(
         	    WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+		mPay.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				startActivity(new Intent(mAppContext, PaymentActivity.class));
+			}
+		});
 	}
 
 	@Override
@@ -177,7 +187,6 @@ public class TicketCreateActivity extends Activity implements
 		calendar.setTimeInMillis(System.currentTimeMillis()
 				+ (secondsMoved * 1000));
 		setClockTime(calendar);
-		
 	}
 
 	@Override
@@ -198,7 +207,12 @@ public class TicketCreateActivity extends Activity implements
 	private void setClockTime(Calendar calendar) {
 		int period = calendar.get(Calendar.AM_PM);
 		String am_pm = (period == Calendar.AM) ? "AM" : "PM";
-		int clock_hour = calendar.get(Calendar.HOUR);
+		int clock_hour = calendar.get(Calendar.HOUR_OF_DAY) % 12;
+		
+		// clock hour is 0. implies that the current hour is 12
+		if(clock_hour == 0) 
+			clock_hour = 12;
+		
 		int clock_minute = calendar.get(Calendar.MINUTE);
 		mClock.setText(String.format("%02d:%02d %s", clock_hour, clock_minute,
 				am_pm));
