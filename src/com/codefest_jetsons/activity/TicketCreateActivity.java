@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Random;
 
 import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
@@ -15,9 +17,9 @@ import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
-import android.view.animation.LayoutAnimationController;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -27,6 +29,7 @@ import com.codefest_jetsons.LicensePlateAdapterInterface;
 import com.codefest_jetsons.R;
 import com.codefest_jetsons.model.Vehicle;
 import com.codefest_jetsons.util.ParkingSharedPref;
+import com.google.android.gms.maps.MapFragment;
 
 public class TicketCreateActivity extends Activity implements
 		SeekBar.OnSeekBarChangeListener, LicensePlateAdapterInterface, OnClickListener {
@@ -42,6 +45,7 @@ public class TicketCreateActivity extends Activity implements
 	private Animation mDownAnimation;
 	private Animation mUpAnimation;
 	private ImageButton mSliderLayout;
+	private FrameLayout mMapHolder;
 	
 	private final int SNAP_DELTA_MINUTES = 15;
 	private final int mMaxtimeSeconds = 7200; // maximum time in seconds the user can choose
@@ -137,6 +141,14 @@ public class TicketCreateActivity extends Activity implements
 		
         //AnimationController controller = new LayoutAnimationController(set, 0.25f);
         
+		FragmentManager manager = getFragmentManager();
+	    FragmentTransaction transaction = manager.beginTransaction();
+
+	    transaction.add(R.id.mapHolder, MapFragment.newInstance());           
+	    transaction.commit();
+		
+		
+		
         getWindow().setSoftInputMode(
         	    WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 	}
