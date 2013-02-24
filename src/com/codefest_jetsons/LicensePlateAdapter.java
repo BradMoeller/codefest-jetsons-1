@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.codefest_jetsons.model.Vehicle;
+import com.codefest_jetsons.util.ParkingSharedPref;
 
 public class LicensePlateAdapter extends PagerAdapter  {
 	private List<Vehicle> mVehicles;
@@ -35,6 +36,20 @@ public class LicensePlateAdapter extends PagerAdapter  {
         license1 = null;
         license2 = null;
 	}
+
+    public Vehicle getSelectedVehicle() {
+        Vehicle currVehicle;
+        if (mPrimaryItem == mVehicles.size()) {
+            String license = license1.get().getText().toString() + license2.get().getText().toString();
+            long licenseID = System.currentTimeMillis();
+            ParkingSharedPref.setVehicle(mContext, "frank@gmail.com", licenseID, license);
+            currVehicle = ParkingSharedPref.getVehicle(mContext, "frank@gmail.com", licenseID);
+        } else {
+            currVehicle = mVehicles.get(mPrimaryItem);
+        }
+
+        return currVehicle;
+    }
 	
 	@Override
 	public int getCount() {

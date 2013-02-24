@@ -6,7 +6,7 @@
     android:background="@drawable/app_background" >
 
     <EditText
-        android:id="@+id/name"
+        android:id="@+id/card_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
@@ -34,7 +34,7 @@
         android:layout_margin="10dp" >
 
         <EditText
-            android:id="@+id/month"
+            android:id="@+id/card_month"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="MM"
@@ -53,7 +53,7 @@
             android:textSize="20sp"/>
         
         <EditText
-            android:id="@+id/month"
+            android:id="@+id/card_year"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="YYYY"
@@ -64,7 +64,7 @@
     </LinearLayout>
 
     <EditText
-        android:id="@+id/cvv"
+        android:id="@+id/card_cvv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
