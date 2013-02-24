@@ -437,6 +437,7 @@ public class TicketInfoActivity extends Activity implements MyLocationListener, 
 
     public void updateTicket(int minutesChanged) {
         t.updateTicket(minutesChanged);
+        ParkingSharedPref.setValidated(mAppContext, "ntate22@gmail.com", "50", false);
         ParkingSharedPref.setTicket(mAppContext, "ntate@gmail.com", 50, t.getPurchaseTime(), t.getMinutesPurchased(),
                 t.getMaxMinutes(), t.getLatitude(), t.getLongitude());
         t = ParkingSharedPref.getTicket(mAppContext, "ntate@gmail.com", 50);

@@ -210,8 +210,8 @@ public class ParkingSharedPref {
         return (HashSet<String>) ctx.getSharedPreferences(VEHICLE_IDS_PREF, Context.MODE_PRIVATE).getStringSet(userID, new HashSet<String>());
     }
 
-    public static void setValidated(Context ctx, String userID, String uniqueID) {
-        ctx.getSharedPreferences(TICKET_PREF, Context.MODE_PRIVATE).edit().putBoolean(userKeyMap(userID, uniqueID, TICKET_VALIDATED), true).commit();
+    public static void setValidated(Context ctx, String userID, String uniqueID, boolean valid) {
+        ctx.getSharedPreferences(TICKET_PREF, Context.MODE_PRIVATE).edit().putBoolean(userKeyMap(userID, uniqueID, TICKET_VALIDATED), valid).commit();
     }
 
     public static boolean getValidated(Context ctx, String userID, String uniqueID) {
