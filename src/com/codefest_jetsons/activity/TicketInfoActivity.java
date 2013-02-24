@@ -1,12 +1,14 @@
 package com.codefest_jetsons.activity;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Random;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -14,15 +16,12 @@ import android.widget.Button;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
+
 import com.codefest_jetsons.R;
 import com.codefest_jetsons.model.Ticket;
 import com.codefest_jetsons.service.TicketService;
 import com.codefest_jetsons.util.ParkingNotifications;
 import com.codefest_jetsons.util.ParkingSharedPref;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Random;
 
 /**
  * Created with IntelliJ IDEA.
