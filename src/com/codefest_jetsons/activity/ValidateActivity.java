@@ -42,7 +42,7 @@ public class ValidateActivity extends Activity {
                 @Override
                 public void run() {
                     // fake data
-                    ParkingSharedPref.setValidated(mAppContext, "ntate22@gmail.com", "12345");
+                    ParkingSharedPref.setValidated(mAppContext, "ntate22@gmail.com", "12345", true);
                     qr.setVisibility(View.GONE);
                     TextView tv = (TextView) getLayoutInflater().inflate(R.layout.ticket_timer_tv, null, false);
                     tv.setText("VALIDATED");
