@@ -52,7 +52,7 @@ public class TicketInfoActivity extends Activity {
 
         Random r = new Random();
         long id = r.nextInt(Integer.MAX_VALUE);
-        ParkingSharedPref.setTicket(mAppContext, "ntate@gmail.com", 50, new Date(), 11, 60);
+        ParkingSharedPref.setTicket(mAppContext, "ntate@gmail.com", 50, new Date(), 11, 60, 40.431368, -79.9805);
         t = ParkingSharedPref.getTicket(mAppContext, "ntate@gmail.com", 50);
 
         ticketTimer = t.getMillisecondsLeft();
