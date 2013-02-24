@@ -14,5 +14,9 @@
         </activity>
         <activity android:name=".activity.TicketInfoActivity" android:screenOrientation="portrait" />
         <activity android:name=".activity.ValidateActivity" android:screenOrientation="portrait" />
+
+        <service android:name=".service.TicketService" />
     </application>
+
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 </manifest>

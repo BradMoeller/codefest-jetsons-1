@@ -7,6 +7,7 @@ import java.util.Random;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -79,6 +80,8 @@ public class TicketCreateActivity extends Activity implements
 		// If hardware acceleration is enabled, you should also remove
 		// clipping on the pager for its children.
 		myPager.setClipChildren(false);
+
+        startActivity(new Intent(TicketCreateActivity.this, TicketInfoActivity.class));
 	}
 
 	@Override
@@ -99,6 +102,7 @@ public class TicketCreateActivity extends Activity implements
 		calendar.setTimeInMillis(System.currentTimeMillis()
 				+ (secondsMoved * 1000));
 		setClockTime(calendar);
+
 	}
 
 	@Override

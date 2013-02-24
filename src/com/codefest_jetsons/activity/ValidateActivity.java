@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.widget.LinearLayout;
 import com.codefest_jetsons.R;
 import com.codefest_jetsons.components.QRCode;
+import com.codefest_jetsons.util.ParkingNotifications;
 
 /**
  * Created with IntelliJ IDEA.
